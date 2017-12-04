@@ -7,45 +7,47 @@
     tools:context="e.le09idas.androidchess23.MainActivity">
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="110dp"
-        android:layout_height="17dp"
+        android:layout_height="27dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
         android:text="@string/android_chess_23"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.134" />
+        app:layout_constraintVertical_bias="0.123"
+        app:layout_constraintVertical_chainStyle="packed" />
 
-    <android.support.constraint.ConstraintLayout
-        android:layout_width="249dp"
-        android:layout_height="69dp"
-        tools:layout_editor_absoluteX="68dp"
-        tools:layout_editor_absoluteY="342dp">
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="161dp"
+        android:layout_height="58dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="336dp"
+        android:text="Start New Game"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/button3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Start New Game"
-            tools:layout_editor_absoluteX="52dp"
-            tools:layout_editor_absoluteY="16dp" />
-    </android.support.constraint.ConstraintLayout>
-
-    <android.support.constraint.ConstraintLayout
-        android:layout_width="243dp"
-        android:layout_height="66dp"
-        tools:layout_editor_absoluteX="68dp"
-        tools:layout_editor_absoluteY="425dp">
-
-        <Button
-            android:id="@+id/button4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Replay Recorded Game"
-            tools:layout_editor_absoluteX="29dp"
-            tools:layout_editor_absoluteY="3dp" />
-    </android.support.constraint.ConstraintLayout>
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="205dp"
+        android:layout_height="52dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Replay Recorded Game"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button3" />
 
 </android.support.constraint.ConstraintLayout>
