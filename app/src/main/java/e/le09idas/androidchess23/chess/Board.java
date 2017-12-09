@@ -1,5 +1,8 @@
 package e.le09idas.androidchess23.chess;
 
+import android.widget.GridLayout;
+import android.widget.ImageButton;
+
 import java.util.ArrayList;
 
 /**
@@ -18,11 +21,13 @@ public class Board {
 	Piece[][] wPieces = new Piece[2][8];//white roster
 	boolean wCanMove = true;//sees if white can move
 	boolean bCanMove = true;//sees if black can move
+	GridLayout cb;
 	
 	/**
 	 * Board constructor using {@link #initPieces()} and {@link #initBoard()}
 	 */
-	public Board(){		
+	public Board(GridLayout chessboard){
+		cb = chessboard;
 		this.initPieces();
 		this.initBoard();
 		this.printBoard();
@@ -168,26 +173,40 @@ public class Board {
 	 * printBoard() prints the board starting with rank 8 and down.
 	 */
 	void printBoard(){
-
+		/*
 		for(int y = 7; y > -1; y--){
 
 			for(int x = 0; x < 8; x++){
 
 				if(this.board[y][x].inhabitant == null){
 
+					// update nothing
 					if(this.board[y][x].color == true){
 						System.out.print("   ");
 					}else{	
 						System.out.print("## ");
 					}
 
+
 				}else{
+
+					// print out matching icon
+
 					System.out.print(this.board[y][x].inhabitant.toString() + " ");
 				}
 			}
 			System.out.print("" + (y + 1) + "\n");//prints the rank
 		}
 		System.out.print(" a  b  c  d  e  f  g  h  \n");//final line
+		*/
+		int i = 0;
+		for(int y = 7; y > -1; y--) {
+			for(int x = 0; x < 8; x++){
+				if(board[y][x].inhabitant != null) {
+					((ImageButton) cb.getChildAt(i)).setImageResource(board[y][x].inhabitant.getResId());
+				}
+			}
+		}
 	}
 	
 	/**

@@ -2,6 +2,8 @@ package e.le09idas.androidchess23.chess;
 
 import java.util.ArrayList;
 
+import e.le09idas.androidchess23.R;
+
 /**
  * Bishop inherits attributes from Piece and includes its own functions
  * for moving and determining its danger zones.
@@ -24,6 +26,11 @@ public class Bishop extends Piece{
 	
 	public Bishop(int x, int y, char c, char t){
 		super(x, y, c, t);
+		if(c == 'w'){
+			this.resId = R.drawable.white_bishop;
+		} else {
+			this.resId = R.drawable.black_bishop;
+		}
 	}
 	
 	/**

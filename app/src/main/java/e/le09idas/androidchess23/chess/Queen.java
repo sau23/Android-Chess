@@ -2,6 +2,8 @@ package e.le09idas.androidchess23.chess;
 
 import java.util.ArrayList;
 
+import e.le09idas.androidchess23.R;
+
 /**
  * Queen inherits from Piece; can move in the same way
  * as Bishop and Rook. 
@@ -22,7 +24,12 @@ public class Queen extends Piece {
 		 * @param t Character for queen
 		 */
 		public Queen(int x, int y, char c, char t){
-			super(x, y, c, t);	
+			super(x, y, c, t);
+			if(c == 'w'){
+				this.resId = R.drawable.white_queen;
+			} else {
+				this.resId = R.drawable.black_queen;
+			}
 		}
 
 		/**

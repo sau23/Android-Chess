@@ -2,6 +2,8 @@ package e.le09idas.androidchess23.chess;
 
 import java.util.ArrayList;
 
+import e.le09idas.androidchess23.R;
+
 /**
  * Rook inherits from Piece; has one additional 
  * attribute used for castling {@link King#checkCastle(int, int, Board)}
@@ -17,6 +19,11 @@ public class Rook extends Piece{
 	public Rook(int x, int y, char c, char t){
 
 		super(x, y, c, t);
+		if(c == 'w'){
+			this.resId = R.drawable.white_rook;
+		} else {
+			this.resId = R.drawable.black_rook;
+		}
 
 	}
 

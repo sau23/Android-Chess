@@ -2,6 +2,8 @@ package e.le09idas.androidchess23.chess;
 
 import java.util.ArrayList;
 
+import e.le09idas.androidchess23.R;
+
 /**
  * Knight inherits from Piece. Moves to 8
  * possible spots, skipping over pieces.
@@ -23,6 +25,11 @@ public class Knight extends Piece{
 	 */
 	public Knight(int x, int y, char side, char t){
 		super(x, y, side, t);
+		if(side == 'w'){
+			this.resId = R.drawable.white_knight;
+		} else {
+			this.resId = R.drawable.black_knight;
+		}
 	}
 	
 	/**

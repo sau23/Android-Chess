@@ -2,6 +2,8 @@ package e.le09idas.androidchess23.chess;
 
 import java.util.ArrayList;
 
+import e.le09idas.androidchess23.R;
+
 /**
  * Pawn inherits attributes from Piece and includes its own functions
  * for moving and determining its danger zones. It also includes its
@@ -31,6 +33,11 @@ public class Pawn extends Piece {
 	
 	public Pawn(int x, int y, char side, char type){
 		super(x, y, side, type);
+		if(side == 'w'){
+			this.resId = R.drawable.white_pawn;
+		} else {
+			this.resId = R.drawable.black_pawn;
+		}
 		enPassant = false;
 	}
 

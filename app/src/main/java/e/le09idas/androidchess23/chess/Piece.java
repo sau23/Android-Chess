@@ -1,5 +1,7 @@
 package e.le09idas.androidchess23.chess;
 
+import android.media.Image;
+
 import java.util.ArrayList;
 /**
  * Piece provides the basic set of moves
@@ -17,6 +19,7 @@ public abstract class Piece {
 	public char color;//w for white; b for black
 	public char type;//P -> pawn
 	public boolean isCaptured;
+	public int resId;
 	
 	/**
 	 * Pieces need coordinates, color and type; initial value for isCaputer is false
@@ -67,7 +70,11 @@ public abstract class Piece {
 		}
 		return false;
 	}
-	
+
+	public int getResId(){
+		return this.resId;
+	}
+
 	/**
 	 * checkMove() sees whether a given position matches
 	 * the moves set of the piece in question; specific implementations

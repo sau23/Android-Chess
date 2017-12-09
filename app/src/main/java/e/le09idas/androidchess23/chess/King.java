@@ -2,6 +2,8 @@ package e.le09idas.androidchess23.chess;
 
 import java.util.ArrayList;
 
+import e.le09idas.androidchess23.R;
+
 /**
  * King inherits from Piece. It also keeps track of whether 
  * it is in check and whether it has moved. It also contains 
@@ -29,7 +31,11 @@ public class King extends Piece{
 	public King(int x, int y, char c, char t){
 		
 		super(x, y, c, t);
-		
+		if(c == 'w'){
+			this.resId = R.drawable.white_king;
+		} else {
+			this.resId = R.drawable.black_king;
+		}
 	}
 	
 	/**

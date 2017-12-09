@@ -8,48 +8,50 @@ import android.graphics.Canvas;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.content.Intent;
 import android.view.SurfaceView;
+import android.widget.GridLayout;
+import android.widget.ImageButton;
+import android.widget.TableLayout;
+import android.view.View.OnClickListener;
 
-public class NewGame extends Activity implements View.OnTouchListener {
+import e.le09idas.androidchess23.chess.Chess;
 
+public class NewGame extends AppCompatActivity implements View.OnClickListener{
+    /*
     BoardView bv;//view that displays game
     Bitmap board;//actual board image
     Bitmap rook1;//actual rook image
     Bitmap rook2;//actual rook image
     float x, y;//arbitrary floats
+    */
+
+    GridLayout chessboard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_new_game);
 
-        //purpose of next 3 lines is to get the machines native screen size
-        //to fit the board
-        DisplayMetrics disDim = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(disDim);
-        int width = disDim.widthPixels;
+        // set back button properties
+        Button goBack = (Button) findViewById(R.id.goBackNG);
+        goBack.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                goBack();
+            }
+        });
 
-        bv = new BoardView(this);//the view on which the other object are put on
-        bv.setOnTouchListener(this);
-
-        //loads chessboard image into bitmap then resclaes it
-        board = BitmapFactory.decodeResource(getResources(), R.drawable.chessboard);
-        board = Bitmap.createScaledBitmap(board, width, width, true);
-
-        //does the same for the rook objects
-        //TODO: create compartmentalized process to intiialize a board and its pictures
-        rook2 = rook1 =  BitmapFactory.decodeResource(getResources(), R.drawable.black_rook);
-        rook1 = Bitmap.createScaledBitmap(rook1, width/8, width/8, true);
-        rook2 = Bitmap.createScaledBitmap(rook2, width/8, width/8, true);
-
-        setContentView(bv);
-        //setContentView(R.layout.activity_new_game);
+        chessboard = (GridLayout) findViewById(R.id.chessboard);
+        Chess.run(chessboard);
 
     }
 
@@ -59,6 +61,13 @@ public class NewGame extends Activity implements View.OnTouchListener {
         startActivity(intent);
     }
 
+    @Override
+    public void onClick(View v) {
+        int clicked_id = v.getId(); // here you get id for clicked TableRow
+        System.out.println(clicked_id);
+    }
+
+    /*
     //The next two methods are overrides of ones from the Activity class
     @Override
     protected void onPause(){
@@ -130,4 +139,5 @@ public class NewGame extends Activity implements View.OnTouchListener {
 
         }
     }
+    */
 }
