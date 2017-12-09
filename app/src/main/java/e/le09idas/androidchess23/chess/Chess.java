@@ -79,33 +79,33 @@ public class Chess {
 						destY = 7 - (index/8);
 						if(checkMove()){
 							move(srcX, srcY, destX, destY);
+							// set check back to false since move was legal
 							if(check) {
 								check = false;
 							}
+							// update en passant for pawns (cannot capture after player makes move)
+							board.updatePawns(!turn);
+
+							// update danger zones for opposite king
+							pathToKing = board.updateDangerZones(turn);
+
+							// if a path to the opposite king has been found, king is in check
+							if(!pathToKing.isEmpty()) {
+
+								// try to find options for opponent
+								respondants = board.getRespondants(turn, pathToKing);
+
+								// check to see if the king can move for next player's turn
+								King king = !turn ? (King)board.wPieces[0][3] : (King)board.bPieces[0][4];
+								kingCanMove = king.canMove(board);
+
+								// opponent's check flag is set
+								check = true;
+							}
+							// change turn
+							turn = !turn;
 						}
-
-						// update en passant for pawns (cannot capture after player makes move)
-						board.updatePawns(!turn);
-
-						// update danger zones for opposite king
-						pathToKing = board.updateDangerZones(turn);
-
-						// if a path to the opposite king has been found, king is in check
-						if(!pathToKing.isEmpty()) {
-
-							// try to find options for opponent
-							respondants = board.getRespondants(turn, pathToKing);
-
-							// check to see if the king can move for next player's turn
-							King king = !turn ? (King)board.wPieces[0][3] : (King)board.bPieces[0][4];
-							kingCanMove = king.canMove(board);
-
-							// opponent's check flag is set
-							check = true;
-						}
-
-						// change turn
-						turn = !turn;
+						// reset input vars
 						srcX = srcY = destX = destY = -1;
 					}
 				}
