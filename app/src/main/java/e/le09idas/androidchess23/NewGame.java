@@ -1,19 +1,24 @@
 package e.le09idas.androidchess23;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.content.Intent;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 
 import e.le09idas.androidchess23.chess.Board;
 import e.le09idas.androidchess23.chess.King;
+import e.le09idas.androidchess23.chess.Pawn;
 import e.le09idas.androidchess23.chess.Piece;
 
 public class NewGame extends AppCompatActivity implements View.OnClickListener{
@@ -86,7 +91,9 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
                     if(srcX == -1 && srcY == -1){
                         srcX = index%8;
                         srcY = 7 - (index/8);
-
+                        if(board.getPiece(srcX, srcY) == null){
+                            srcX = srcY = -1;
+                        }
                     } else {
                         destX = index%8;
                         destY = 7 - (index/8);
@@ -97,76 +104,17 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
                             if(check) {
                                 check = false;
                             }
-                            // TODO: implement promotion with dialog
-                            /*
+
                             // check if piece moved was a promotable pawn
-                            if(piece.type == 'p') {
-                                Pawn pawn = (Pawn)(piece);
-                                if(pawn.canPromote()) {
-                                    pawn.promote(p, board);
+                            if(!checkPawn(board.getPiece(destX, destY))){
+                                continueGame();
 
-                                    // call move again to update the marker on the tile
-                                    move(xD, yD, xD, yD);
-                                }
+                                // reset input vars
+                                srcX = srcY = destX = destY = -1;
                             }
-                            */
-                            // update en passant for pawns (cannot capture after player makes move)
-                            board.updatePawns(!turn);
-
-                            // update danger zones for opposite king
-                            pathToKing = board.updateDangerZones(turn);
-
-                            // if a path to the opposite king has been found, king is in check
-                            if(!pathToKing.isEmpty()) {
-
-                                // try to find options for opponent
-                                respondants = board.getRespondants(turn, pathToKing);
-
-                                // check to see if the king can move for next player's turn
-                                King king = !turn ? (King)board.wPieces[0][3] : (King)board.bPieces[0][4];
-                                kingCanMove = king.canMove(board);
-
-                                // opponent's check flag is set
-                                check = true;
-                            }
-                            // change turn
-                            turn = !turn;
-
-                            // check for checkmate
-                            if(check && !kingCanMove && respondants.isEmpty()) {
-                                AlertDialog.Builder alertDialog = new AlertDialog.Builder(NewGame.this);
-                                if(turn) {
-                                    alertDialog.setMessage("Black wins!\nSave replay?");
-                                    System.out.println("Black wins");
-                                } else {
-                                    alertDialog.setMessage("White wins!\nSave replay?");
-                                    System.out.println("White wins");
-                                }
-                                alertDialog.setCancelable(false)
-                                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                finish();
-                                            }
-                                        })
-                                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                finish();
-                                            }
-                                        });
-                                AlertDialog alert = alertDialog.create();
-                                alert.setTitle("Checkmate");
-                                alert.show();
-                                System.out.println("Checkmate");
-
-                            // otherwise if the player is in check, print check and continue
-                            } else if(check) {
-                                System.out.println("Check");
-                            }
+                        } else {
+                            srcX = srcY = destX = destY = -1;
                         }
-                        // reset input vars
-                        srcX = srcY = destX = destY = -1;
                     }
                 }
             });
@@ -203,10 +151,9 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
     }
     */
 
-    private static boolean checkMove(){
+    private boolean checkMove(){
         if(srcX == destX && srcY == destY){
             if (DEBUG) System.out.println("Cannot have same coordinates");
-            System.out.println("Illegal move, try again");
             return false;
         }
 
@@ -215,26 +162,12 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
         // check if there is a piece in the origin
         if(piece == null) {
             if (DEBUG) System.out.println("There is no piece at the origin");
-            System.out.println("Illegal move, try again");
             return false;
 
             // check if the piece is the player's piece
-        } else if((piece.color == 'w' && !turn) || (piece.color == 'b' && turn)){
+        } else if((piece.color == 'w' && !turn) || (piece.color == 'b' && turn)) {
             if (DEBUG) System.out.println("Cannot move a piece that isn't yours");
-            System.out.println("Illegal move, try again");
             return false;
-		/*
-		// check if input is attempting to promote a non-pawn piece
-		} else if(piece.type != 'p' && !draw && p > 0) {
-			if (DEBUG) System.out.println("Cannot promote a non-pawn piece");
-			System.out.println("Illegal move, try again");
-
-		// check if input is attempting to promote a pawn while it isn't promotable
-		// if a piece is type is type p, its destination is neither 0 7 and extra is already set
-		} else if(piece.type == 'p' && destY != 0 && destY != 7 && !draw && p > 0) {
-			if (DEBUG) System.out.println("Cannot promote pawn yet!");
-			System.out.println("Illegal move, try again");
-		*/
         }
 
         // check if input is attempting to move a piece that wasn't found by getRespondants
@@ -247,7 +180,6 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
             }
             if(!b) {
                 if (DEBUG) System.out.println("Your king is in check!");
-                System.out.println("Illegal move, try again");
                 return false;
             }
         }
@@ -255,12 +187,149 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
         // attempt to move the selected piece
         if(!piece.checkMove(srcX, srcY, destX, destY, board)) {
             if (DEBUG) System.out.println("This piece can't move that way!");
-            System.out.println("Illegal move, try again");
             return false;
         }
 
         return true;
     }
+
+    public boolean checkPawn(Piece piece){
+        if(piece.type != 'p') {
+            return false;
+        }
+
+        final Pawn pawn = (Pawn)piece;
+        if(pawn.canPromote()) {
+            final Dialog dialog = new Dialog(this);
+            dialog.setTitle("Choose piece to promote pawn");
+            dialog.setContentView(R.layout.activity_promote);
+            ImageButton bishop, knight, queen, rook;
+            bishop = (ImageButton)dialog.findViewById(R.id.bishop);
+            bishop.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    pawn.promote('B', board);
+                    move(destX, destY, destX, destY);
+                    continueGame();
+
+                    // reset input vars
+                    srcX = srcY = destX = destY = -1;
+                    dialog.cancel();
+                }
+            });
+            knight = (ImageButton)dialog.findViewById(R.id.knight);
+            knight.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    pawn.promote('N', board);
+                    move(destX, destY, destX, destY);
+                    continueGame();
+
+                    // reset input vars
+                    srcX = srcY = destX = destY = -1;
+                    dialog.cancel();
+                }
+            });
+            queen = (ImageButton)dialog.findViewById(R.id.queen);
+            queen.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    pawn.promote('Q', board);
+                    move(destX, destY, destX, destY);
+                    continueGame();
+
+                    // reset input vars
+                    srcX = srcY = destX = destY = -1;
+                    dialog.cancel();
+                }
+            });
+            rook = (ImageButton)dialog.findViewById(R.id.rook);
+            rook.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    pawn.promote('R', board);
+                    move(destX, destY, destX, destY);
+                    continueGame();
+
+                    // reset input vars
+                    srcX = srcY = destX = destY = -1;
+                    dialog.cancel();
+                }
+            });
+            if(piece.color == 'w') {
+                bishop.setImageResource(R.drawable.white_bishop);
+                knight.setImageResource(R.drawable.white_knight);
+                queen.setImageResource(R.drawable.white_queen);
+                rook.setImageResource(R.drawable.white_rook);
+            } else {
+                bishop.setImageResource(R.drawable.black_bishop);
+                knight.setImageResource(R.drawable.black_knight);
+                queen.setImageResource(R.drawable.black_queen);
+                rook.setImageResource(R.drawable.black_rook);
+            }
+            dialog.show();
+            return true;
+        }
+        return false;
+    }
+
+    public void continueGame(){
+        // update en passant for pawns (cannot capture after player makes move)
+        board.updatePawns(!turn);
+
+        // update danger zones for opposite king
+        pathToKing = board.updateDangerZones(turn);
+
+        // if a path to the opposite king has been found, king is in check
+        if(!pathToKing.isEmpty()) {
+
+            // try to find options for opponent
+            respondants = board.getRespondants(turn, pathToKing);
+
+            // check to see if the king can move for next player's turn
+            King king = !turn ? (King)board.wPieces[0][3] : (King)board.bPieces[0][4];
+            kingCanMove = king.canMove(board);
+
+            // opponent's check flag is set
+            check = true;
+        }
+        // change turn
+        turn = !turn;
+
+        // check for checkmate
+        if(check && !kingCanMove && respondants.isEmpty()) {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(NewGame.this);
+            if(turn) {
+                alertDialog.setMessage("Black wins!\nSave replay?");
+                System.out.println("Black wins");
+            } else {
+                alertDialog.setMessage("White wins!\nSave replay?");
+                System.out.println("White wins");
+            }
+            alertDialog.setCancelable(false)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            finish();
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            finish();
+                        }
+                    });
+            AlertDialog alert = alertDialog.create();
+            alert.setTitle("Checkmate");
+            alert.show();
+            System.out.println("Checkmate");
+
+            // otherwise if the player is in check, print check and continue
+        } else if(check) {
+            System.out.println("Check");
+        }
+    }
+
 
     /**
      * move() moves Piece to a given location after checking its possible locations

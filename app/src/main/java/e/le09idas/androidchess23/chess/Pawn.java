@@ -342,7 +342,7 @@ public class Pawn extends Piece {
 	 * @param	board	the current board configuration
 	 */
 
-	void promote(int type, Board board) {
+	public void promote(int type, Board board) {
 
 		Piece promotion;
 		switch (type) {
@@ -391,7 +391,7 @@ public class Pawn extends Piece {
 	 * @return whether a piece can be promoted
 	 */
 
-	boolean canPromote() {
+	public boolean canPromote() {
 		
 		if(this.y == 7 && this.color == 'w') {
 			return true;
