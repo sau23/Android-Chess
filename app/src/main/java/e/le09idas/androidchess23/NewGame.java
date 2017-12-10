@@ -25,7 +25,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
     float x, y;//arbitrary floats
     */
 
-    public static boolean check = false;//indicates whether or not the game is in check
+    public static boolean check;//indicates whether or not the game is in check
     public static int[][] cP = {{2,0}, {6, 0}, {2, 7}, {6, 7}};//castle coord; spaces the king can go to in a castling move
 
     public static GridLayout cb;
@@ -34,25 +34,25 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
     public static Board board;// = new Board();
 
     // classy debug boolean
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
 
     // source/destination variables
     private static int srcX = -1, srcY = -1, destX = -1, destY = -1;
 
     // variable to simulate switching turns; true means it's white's turn
-    private static boolean turn = true;
+    private static boolean turn;
 
     // declare list of spaces for check
     private static ArrayList<int[]> pathToKing;
 
     // declare list of respondants for check
-    private static ArrayList<int[]> respondants = new ArrayList<int[]>();
+    private static ArrayList<int[]> respondants;
 
     // declare boolean check to see if king can move
-    private static boolean kingCanMove = false;
+    private static boolean kingCanMove;
 
-
-    GridLayout chessboard;
+    // image button variable
+    public static ImageButton ib;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,8 +67,113 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
                 goBack();
             }
         });
-        chessboard = (GridLayout) findViewById(R.id.chessboard);
-        run(chessboard);
+        cb = (GridLayout) findViewById(R.id.chessboard);
+
+        // reset variables
+        check = false;
+        turn = true;
+        respondants = new ArrayList<int[]>();
+        kingCanMove = false;
+
+        // set chessboard's buttons' properties
+        int size = cb.getChildCount();
+        for(int i = 0; i < size; i++) {
+            ib = (ImageButton) cb.getChildAt(i);
+            final int index = i;
+            ib.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v){
+                    if(srcX == -1 && srcY == -1){
+                        srcX = index%8;
+                        srcY = 7 - (index/8);
+
+                    } else {
+                        destX = index%8;
+                        destY = 7 - (index/8);
+                        if(checkMove()){
+
+                            move(srcX, srcY, destX, destY);
+                            // set check back to false since move was legal
+                            if(check) {
+                                check = false;
+                            }
+                            // TODO: implement promotion with dialog
+                            /*
+                            // check if piece moved was a promotable pawn
+                            if(piece.type == 'p') {
+                                Pawn pawn = (Pawn)(piece);
+                                if(pawn.canPromote()) {
+                                    pawn.promote(p, board);
+
+                                    // call move again to update the marker on the tile
+                                    move(xD, yD, xD, yD);
+                                }
+                            }
+                            */
+                            // update en passant for pawns (cannot capture after player makes move)
+                            board.updatePawns(!turn);
+
+                            // update danger zones for opposite king
+                            pathToKing = board.updateDangerZones(turn);
+
+                            // if a path to the opposite king has been found, king is in check
+                            if(!pathToKing.isEmpty()) {
+
+                                // try to find options for opponent
+                                respondants = board.getRespondants(turn, pathToKing);
+
+                                // check to see if the king can move for next player's turn
+                                King king = !turn ? (King)board.wPieces[0][3] : (King)board.bPieces[0][4];
+                                kingCanMove = king.canMove(board);
+
+                                // opponent's check flag is set
+                                check = true;
+                            }
+                            // change turn
+                            turn = !turn;
+
+                            // check for checkmate
+                            if(check && !kingCanMove && respondants.isEmpty()) {
+                                AlertDialog.Builder alertDialog = new AlertDialog.Builder(NewGame.this);
+                                if(turn) {
+                                    alertDialog.setMessage("Black wins!\nSave replay?");
+                                    System.out.println("Black wins");
+                                } else {
+                                    alertDialog.setMessage("White wins!\nSave replay?");
+                                    System.out.println("White wins");
+                                }
+                                alertDialog.setCancelable(false)
+                                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                finish();
+                                            }
+                                        })
+                                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                finish();
+                                            }
+                                        });
+                                AlertDialog alert = alertDialog.create();
+                                alert.setTitle("Checkmate");
+                                alert.show();
+                                System.out.println("Checkmate");
+
+                            // otherwise if the player is in check, print check and continue
+                            } else if(check) {
+                                System.out.println("Check");
+                            }
+                        }
+                        // reset input vars
+                        srcX = srcY = destX = destY = -1;
+                    }
+                }
+            });
+        }
+
+        // create new board instance
+        board = new Board(cb);
     }
 
     //from previous usage of AppCompActivity class
@@ -97,116 +202,6 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
         bv.resume();
     }
     */
-    public static ImageButton ib;
-    public void run(GridLayout chessboard) {
-
-        // set the reference to chessboard
-        cb = chessboard;
-
-        // set chessboard's buttons' properties
-        int size = cb.getChildCount();
-        for(int i = 0; i < size; i++) {
-            ib = (ImageButton) cb.getChildAt(i);
-            final int index = i;
-            ib.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View v){
-                    if(srcX == -1 && srcY == -1){
-                        srcX = index%8;
-                        srcY = 7 - (index/8);
-
-                    } else {
-                        destX = index%8;
-                        destY = 7 - (index/8);
-                        if(checkMove()){
-
-                            move(srcX, srcY, destX, destY);
-                            // set check back to false since move was legal
-                            if(check) {
-                                check = false;
-                            }
-                            // update en passant for pawns (cannot capture after player makes move)
-                            board.updatePawns(!turn);
-
-                            // update danger zones for opposite king
-                            pathToKing = board.updateDangerZones(turn);
-
-                            // if a path to the opposite king has been found, king is in check
-                            if(!pathToKing.isEmpty()) {
-
-                                // try to find options for opponent
-                                respondants = board.getRespondants(turn, pathToKing);
-
-                                // check to see if the king can move for next player's turn
-                                King king = !turn ? (King)board.wPieces[0][3] : (King)board.bPieces[0][4];
-                                kingCanMove = king.canMove(board);
-
-                                // opponent's check flag is set
-                                check = true;
-                            }
-                            // change turn
-                            turn = !turn;
-
-                            // check for checkmate
-                            if(check && !kingCanMove && respondants.isEmpty()) {
-                                AlertDialog.Builder alertDialog = new AlertDialog.Builder(NewGame.this);
-                                if(turn) {
-                                    alertDialog.setMessage("Black wins!");
-                                    System.out.println("Black wins");
-                                } else {
-                                    alertDialog.setMessage("White wins!");
-                                    System.out.println("White wins");
-                                }
-                                        alertDialog.setCancelable(false)
-                                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                finish();
-                                            }
-                                        })
-                                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                dialogInterface.cancel();
-                                            }
-                                        });
-                                AlertDialog alert = alertDialog.create();
-                                alert.setTitle("Checkmate");
-                                alert.show();
-                                System.out.println("Checkmate");
-
-                            // otherwise if the player is in check, print check and continue
-                            } else if(check) {
-                                System.out.println("Check");
-                            }
-                        }
-                        // reset input vars
-                        srcX = srcY = destX = destY = -1;
-                    }
-                }
-            });
-        }
-
-        // create new board instance
-        board = new Board(cb);
-
-		/*
-			// check if piece moved was a promotable pawn
-			if(piece.type == 'p') {
-				Pawn pawn = (Pawn)(piece);
-				if(pawn.canPromote()) {
-					pawn.promote(p, board);
-
-					// call move again to update the marker on the tile
-					move(xD, yD, xD, yD);
-				}
-			}
-
-			// print board
-			//board.printBoard();
-		}
-		*/
-    }
 
     private static boolean checkMove(){
         if(srcX == destX && srcY == destY){
