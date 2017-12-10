@@ -205,6 +205,7 @@ public class Board {
 				if(board[y][x].inhabitant != null) {
 					((ImageButton) cb.getChildAt(i)).setImageResource(board[y][x].inhabitant.getResId());
 				}
+				i++;
 			}
 		}
 	}
