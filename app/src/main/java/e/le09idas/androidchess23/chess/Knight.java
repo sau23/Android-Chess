@@ -44,7 +44,7 @@ public class Knight extends Piece{
 	 * @param board Given to see if anything is in the path of a move
 	 * @return Whether a piece can make a move to a spot
 	 */
-	boolean checkMove(int xO, int yO, int xD, int yD, Board board) {
+	public boolean checkMove(int xO, int yO, int xD, int yD, Board board) {
 
 		//knight moves 2 or 1 spaces up or down, left or right
 		//there are 8 possible types of moves
@@ -69,7 +69,7 @@ public class Knight extends Piece{
 	 * @param board Serves as a reference for a Knight.
 	 * @return true if a Knight can move; false if not.
 	 */
-	boolean canMove(Board board) {
+	public boolean canMove(Board board) {
 
 		//there are 8 places to check
 		int[][] spot = {{this.x + 1, this.y + 2},//i.e., right 1, left 2 

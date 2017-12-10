@@ -87,8 +87,8 @@ public abstract class Piece {
 	 * @param board Given to see if anything is in the path of a move
 	 * @return -> Whether a piece can make a move to a spot
 	 */
-	abstract boolean checkMove(int xO, int yO, int xD, int yD, Board board);
-	
+	public abstract boolean checkMove(int xO, int yO, int xD, int yD, Board board);
+
 	/**
 	 * canMove() checks all possible moves from a piece, depending on its type;
 	 * 

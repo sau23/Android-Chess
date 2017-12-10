@@ -2,6 +2,7 @@ package e.le09idas.androidchess23.chess;
 
 import java.util.ArrayList;
 
+import e.le09idas.androidchess23.NewGame;
 import e.le09idas.androidchess23.R;
 
 /**
@@ -42,7 +43,7 @@ public class King extends Piece{
 	 * checkMove() sees whether the King can move in its 3X3 square perimeter; 
 	 * it also can castle if special conditions are met using {@link #checkCastle(int, int, Board)}.
 	 */
-	boolean checkMove(int xO, int yO, int xD, int yD, Board board) {
+	public boolean checkMove(int xO, int yO, int xD, int yD, Board board) {
 
 		//king can move omni-directionally 1
 		//king not only has to consider collisions with pieces but also danger zones
@@ -87,7 +88,7 @@ public class King extends Piece{
 	/**
 	 * 
 	 */
-	boolean canMove(Board board) {
+	public boolean canMove(Board board) {
 		
 		int[][] spot = {{this.x, this.y + 1},//i.e., right 1, left 1 
 				{this.x, this.y - 1},
@@ -118,7 +119,7 @@ public class King extends Piece{
 		
 	/**
 	 * checkCastle() sees whether the conditions are met to castle; if they are, the function 
-	 * moves the Rook to its position; the king then gets moved by {@link Chess#move(int, int, int, int)}
+	 * moves the Rook to its position; the king then gets moved by {@link NewGame#move(int, int, int, int)}
  	 *
 	 * @param x The xCoord of the possible rook
 	 * @param y The yCoord of the possible rook
@@ -168,7 +169,7 @@ public class King extends Piece{
 						return false;
 					
 				}
-				Chess.move(0, 0, x + 1, y);
+				NewGame.move(0, 0, x + 1, y);
 				return true;
 
 			}
@@ -184,7 +185,7 @@ public class King extends Piece{
 						return false;
 					
 				}
-				Chess.move(7, 0, x - 1, y);
+				NewGame.move(7, 0, x - 1, y);
 				return true;
 			}
 		
@@ -201,7 +202,7 @@ public class King extends Piece{
 							return false;
 						
 					}
-					Chess.move(0, 7, x + 1, y);
+					NewGame.move(0, 7, x + 1, y);
 					return true;
 				}
 						
@@ -216,7 +217,7 @@ public class King extends Piece{
 							return false;
 						
 					}
-					Chess.move(7, 7, x - 1, y);//moves rook
+					NewGame.move(7, 7, x - 1, y);//moves rook
 					return true;
 				}
 			}

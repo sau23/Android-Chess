@@ -38,7 +38,7 @@ public class Rook extends Piece{
 	 * @param board Reference for the Rook to use
 	 * @return true if it can move; false otherwise
 	 */
-	boolean checkMove(int xO, int yO, int xD, int yD, Board board) {
+	public boolean checkMove(int xO, int yO, int xD, int yD, Board board) {
 
 		//rook can move vertically or horizontally in any direction
 		//we don't need slope just displacement
@@ -126,7 +126,7 @@ public class Rook extends Piece{
 	 * @param board Used as a reference for a Rook
 	 * @return true if there are any more; false otherwise
 	 */
-	boolean canMove(Board board) {
+	public boolean canMove(Board board) {
 
 		//have to check vertically and horizontally from rook
 

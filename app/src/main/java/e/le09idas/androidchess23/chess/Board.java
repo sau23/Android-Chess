@@ -17,8 +17,8 @@ import java.util.ArrayList;
 public class Board {
 
 	Tile[][] board = new Tile[8][8];//the board
-	Piece[][] bPieces = new Piece[2][8];//black roster
-	Piece[][] wPieces = new Piece[2][8];//white roster
+	public Piece[][] bPieces = new Piece[2][8];//black roster
+	public Piece[][] wPieces = new Piece[2][8];//white roster
 	boolean wCanMove = true;//sees if white can move
 	boolean bCanMove = true;//sees if black can move
 	GridLayout cb;
@@ -291,7 +291,7 @@ public class Board {
 	 * @return A grid of a Board's danger zones
 	 */
 	
-	ArrayList<int[]> updateDangerZones(boolean turn) {
+	public ArrayList<int[]> updateDangerZones(boolean turn) {
 		
 		clearDangerZones(turn);
 		
@@ -334,7 +334,7 @@ public class Board {
 	 * @param pathToKing
 	 * @return
 	 */
-	ArrayList<int[]> getRespondants(boolean checker, ArrayList<int[]> pathToKing){
+	public ArrayList<int[]> getRespondants(boolean checker, ArrayList<int[]> pathToKing){
 		
 		ArrayList<int[]> ret = new ArrayList<int[]>();
 		

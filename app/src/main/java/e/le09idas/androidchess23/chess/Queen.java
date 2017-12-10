@@ -43,7 +43,7 @@ public class Queen extends Piece {
 		 * @param board The board of reference for the queen
 		 * @return True if the queen can make the move; false if not
 		 */
-		boolean checkMove(int xO, int yO, int xD, int yD, Board board){
+		public boolean checkMove(int xO, int yO, int xD, int yD, Board board){
 			
 			// vars
 			int rise = yD - yO;
@@ -149,7 +149,7 @@ public class Queen extends Piece {
 		 * reference
 		 * @return True if any further moves are possible
 		 */
-		boolean canMove(Board board){
+		public boolean canMove(Board board){
 			
 			// a queen can move if any of the 8 spaces around it are not filled
 
