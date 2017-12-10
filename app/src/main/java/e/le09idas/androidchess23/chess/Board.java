@@ -30,7 +30,6 @@ public class Board {
 		cb = chessboard;
 		this.initPieces();
 		this.initBoard();
-		this.printBoard();
 	}
 	
 	/**
@@ -167,38 +166,8 @@ public class Board {
 			this.board[0][7] = new Tile(this.wPieces[0][0], false, false, true, this.wPieces[0][0].toString());
 			
 		}
-	}
-	
-	/**
-	 * printBoard() prints the board starting with rank 8 and down.
-	 */
-	void printBoard(){
-		/*
-		for(int y = 7; y > -1; y--){
 
-			for(int x = 0; x < 8; x++){
-
-				if(this.board[y][x].inhabitant == null){
-
-					// update nothing
-					if(this.board[y][x].color == true){
-						System.out.print("   ");
-					}else{	
-						System.out.print("## ");
-					}
-
-
-				}else{
-
-					// print out matching icon
-
-					System.out.print(this.board[y][x].inhabitant.toString() + " ");
-				}
-			}
-			System.out.print("" + (y + 1) + "\n");//prints the rank
-		}
-		System.out.print(" a  b  c  d  e  f  g  h  \n");//final line
-		*/
+		// updates the ui board
 		int i = 0;
 		for(int y = 7; y > -1; y--) {
 			for(int x = 0; x < 8; x++){
@@ -207,6 +176,26 @@ public class Board {
 				}
 				i++;
 			}
+		}
+	}
+	
+	/**
+	 * printBoard() prints the board starting with rank 8 and down.
+	 */
+	public void printBoard(){
+		for(int y = 7; y > -1; y--){
+			for(int x = 0; x < 8; x++){
+				if(this.board[y][x].inhabitant == null){
+					if(this.board[y][x].color == true){
+						System.out.print("   ");
+					}else{	
+						System.out.print("## ");
+					}
+				}else{
+					System.out.print(this.board[y][x].inhabitant.toString() + " ");
+				}
+			}
+			System.out.print("\n");//prints the rank
 		}
 	}
 	

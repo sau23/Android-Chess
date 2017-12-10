@@ -6,13 +6,10 @@ import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.content.Intent;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 
@@ -20,15 +17,9 @@ import e.le09idas.androidchess23.chess.Board;
 import e.le09idas.androidchess23.chess.King;
 import e.le09idas.androidchess23.chess.Pawn;
 import e.le09idas.androidchess23.chess.Piece;
+import e.le09idas.androidchess23.chess.Replay;
 
 public class NewGame extends AppCompatActivity implements View.OnClickListener{
-    /*
-    BoardView bv;//view that displays game
-    Bitmap board;//actual board image
-    Bitmap rook1;//actual rook image
-    Bitmap rook2;//actual rook image
-    float x, y;//arbitrary floats
-    */
 
     public static boolean check;//indicates whether or not the game is in check
     public static int[][] cP = {{2,0}, {6, 0}, {2, 7}, {6, 7}};//castle coord; spaces the king can go to in a castling move
@@ -59,6 +50,9 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
     // image button variable
     public static ImageButton ib;
 
+    // replay moves list
+    private Replay replay;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,11 +68,20 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
         });
         cb = (GridLayout) findViewById(R.id.chessboard);
 
+        // set AI button properties
+        Button ai = (Button) findViewById(R.id.ai);
+
+
+        // set undo button properties
+        Button undo = (Button) findViewById(R.id.undo);
+
+
         // reset variables
         check = false;
         turn = true;
         respondants = new ArrayList<int[]>();
         kingCanMove = false;
+        replay = new Replay();
 
         // set chessboard's buttons' properties
         int size = cb.getChildCount();
@@ -107,6 +110,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
 
                             // check if piece moved was a promotable pawn
                             if(!checkPawn(board.getPiece(destX, destY))){
+                                replay.addCoordinates(srcX, srcY, destX, destY, -1);
                                 continueGame();
 
                                 // reset input vars
@@ -210,6 +214,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
                 public void onClick(View view) {
                     pawn.promote('B', board);
                     move(destX, destY, destX, destY);
+                    replay.addCoordinates(srcX, srcY, destX, destY, 0);
                     continueGame();
 
                     // reset input vars
@@ -223,6 +228,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
                 public void onClick(View view) {
                     pawn.promote('N', board);
                     move(destX, destY, destX, destY);
+                    replay.addCoordinates(srcX, srcY, destX, destY, 1);
                     continueGame();
 
                     // reset input vars
@@ -236,6 +242,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
                 public void onClick(View view) {
                     pawn.promote('Q', board);
                     move(destX, destY, destX, destY);
+                    replay.addCoordinates(srcX, srcY, destX, destY, 2);
                     continueGame();
 
                     // reset input vars
@@ -249,6 +256,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
                 public void onClick(View view) {
                     pawn.promote('R', board);
                     move(destX, destY, destX, destY);
+                    replay.addCoordinates(srcX, srcY, destX, destY, 3);
                     continueGame();
 
                     // reset input vars
@@ -299,6 +307,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
         // check for checkmate
         if(check && !kingCanMove && respondants.isEmpty()) {
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(NewGame.this);
+            if(DEBUG) board.printBoard();
             if(turn) {
                 alertDialog.setMessage("Black wins!\nSave replay?");
                 System.out.println("Black wins");
@@ -310,6 +319,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
+                            // append moves list to static list of moves lists
                             finish();
                         }
                     })
@@ -329,7 +339,6 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
             System.out.println("Check");
         }
     }
-
 
     /**
      * move() moves Piece to a given location after checking its possible locations
@@ -352,8 +361,8 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
         board.getTile(xD, yD).inhabitant = piece;
 
         // update board in origin and destination to print properly
-        //board.getTile(xO, yO).resymbol();
-        //board.getTile(xD, yD).resymbol();
+        board.getTile(xO, yO).resymbol();
+        board.getTile(xD, yD).resymbol();
         ((ImageButton)cb.getChildAt(xO + ((7 - yO) * 8))).setImageResource(android.R.drawable.list_selector_background);
         ((ImageButton)cb.getChildAt(xD + ((7 - yD) * 8))).setImageResource(piece.getResId());
 
