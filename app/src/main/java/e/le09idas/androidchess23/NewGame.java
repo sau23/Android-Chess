@@ -18,6 +18,10 @@ import java.util.ArrayList;
 import e.le09idas.androidchess23.chess.Board;
 import e.le09idas.androidchess23.chess.King;
 import e.le09idas.androidchess23.chess.Pawn;
+import e.le09idas.androidchess23.chess.Bishop;
+import e.le09idas.androidchess23.chess.Knight;
+import e.le09idas.androidchess23.chess.Queen;
+import e.le09idas.androidchess23.chess.Rook;
 import e.le09idas.androidchess23.chess.Piece;
 import e.le09idas.androidchess23.chess.Replay;
 import e.le09idas.androidchess23.chess.ReplayList;
@@ -41,6 +45,9 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
     // variable to simulate switching turns; true means it's white's turn
     private static boolean turn;
 
+    //piece taken during current turn -1 for none, 0+ for pawn, bishop, etc
+    static int take;
+
     // declare list of spaces for check
     private static ArrayList<int[]> pathToKing;
 
@@ -54,9 +61,11 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
     public static ImageButton ib;
 
     // replay moves list
-    private Replay replay;
+    private static Replay replay;
 
     private static TextView textView;
+
+    private boolean canUndo = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +124,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
                     } else {
                         destX = index%8;
                         destY = 7 - (index/8);
+
                         if(checkMove()){
 
                             move(srcX, srcY, destX, destY);
@@ -125,7 +135,8 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
 
                             // check if piece moved was a promotable pawn
                             if(!checkPawn(board.getPiece(destX, destY))){
-                                replay.addCoordinates(srcX, srcY, destX, destY, -1, -1);
+                                replay.addCoordinates(srcX, srcY, destX, destY, -1, take);
+                                textView.setText("took " + board.getTile(destX, destY).inhabitant.toString());
                                 continueGame();
 
                                 // reset input vars
@@ -215,6 +226,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
                     pawn.promote('B', board);
                     move(destX, destY, destX, destY);
                     replay.addCoordinates(srcX, srcY, destX, destY, 0, -1);
+                    textView.setText("" + replay.getReplay().size());
                     continueGame();
 
                     // reset input vars
@@ -228,7 +240,8 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
                 public void onClick(View view) {
                     pawn.promote('N', board);
                     move(destX, destY, destX, destY);
-                    replay.addCoordinates(srcX, srcY, destX, destY, 1, -1);
+                    replay.addCoordinates(srcX, srcY, destX, destY, 1 , -1);
+                    textView.setText("" + replay.getReplay().size());
                     continueGame();
 
                     // reset input vars
@@ -243,6 +256,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
                     pawn.promote('Q', board);
                     move(destX, destY, destX, destY);
                     replay.addCoordinates(srcX, srcY, destX, destY, 2, -1);
+                    textView.setText("" + replay.getReplay().size());
                     continueGame();
 
                     // reset input vars
@@ -256,7 +270,9 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
                 public void onClick(View view) {
                     pawn.promote('R', board);
                     move(destX, destY, destX, destY);
+
                     replay.addCoordinates(srcX, srcY, destX, destY, 3, -1);
+                    textView.setText("" + replay.getReplay().size());
                     continueGame();
 
                     // reset input vars
@@ -336,7 +352,11 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
 
             // otherwise if the player is in check, print check and continue
         } else if(check) {
-            System.out.println("Check");
+            if(turn){
+                textView.setText("White in check!");
+            }else{
+                textView.setText("Black in cehck!");
+            }
         }
     }
 
@@ -353,10 +373,22 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
         // get piece at origin
         Piece piece = board.getPiece(xO, yO);
 
+        //assume no piece will be taken at first
+        take = -1;
+
         // move piece to the destination
         board.getTile(xO, yO).inhabitant = null;
         if(board.getPiece(xD, yD) != null) {
-            board.getPiece(xD, yD).type
+            //id piece and set take appropriately
+            if(board.getTile(xD, yD).inhabitant != null){
+                switch(board.getTile(xD, yD).inhabitant.type){
+                    case 'P':take = 0;break;
+                    case 'B':take = 1;break;
+                    case 'N':take = 2;break;
+                    case 'Q':take = 3;break;
+                    case 'R':take = 4;break;
+                }
+            }
             board.getPiece(xD, yD).isCaptured = true;
         }
         board.getTile(xD, yD).inhabitant = piece;
@@ -394,28 +426,65 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
     }
 
     void undoMove(){
+        textView.setText("undo start");
         try {
-            int[] last = new int[5];
+            int[] last = new int[6];
             last = replay.getLast();
-            Piece piece = board.getPiece(last[2], last[3]);
+            replay.removeLast();
+            Piece piece1;
+            Piece piece2 = null;
 
-            board.getTile(last[2], last[3]).inhabitant = null;
-            board.getTile(last[0], last[1]).inhabitant = piece;
+            if(last[4] != -1){
+                piece1 = new Pawn(last[2], last[3], board.getPiece(last[2], last[3]).color, 'P');
+            }else {
+                piece1 = board.getPiece(last[2], last[3]);
+            }
+
+            if(last[5] != -1){
+                char side;
+                if(piece1.color == 'w'){
+                    side = 'b';
+                }else{
+                    side = 'w';
+                }
+
+                switch((char)last[5]){
+                    case 0: piece2 = board.getTile(last[2], last[3]).inhabitant = new Pawn(last[2], last[3], side, 'P'); break;
+                    case 1: piece2 = board.getTile(last[2], last[3]).inhabitant = new Bishop(last[2], last[3], side, 'B'); break;
+                    case 2: piece2 = board.getTile(last[2], last[3]).inhabitant = new Knight(last[2], last[3], side, 'N');break;
+                    case 3: piece2 = board.getTile(last[2], last[3]).inhabitant = new Queen(last[2], last[3], side, 'Q');break;
+                    case 4: piece2 = board.getTile(last[2], last[3]).inhabitant = new Rook(last[2], last[3], side, 'R');break;
+                }
+
+            }
+
+            board.getTile(last[2], last[3]).inhabitant = piece2;
+            board.getTile(last[0], last[1]).inhabitant = piece1;
 
             board.getTile(last[2], last[3]).resymbol();
             board.getTile(last[0], last[1]).resymbol();
 
-            ((ImageButton)cb.getChildAt(last[2] + ((7 - last[3]) * 8))).setImageResource(android.R.drawable.list_selector_background);
-            ((ImageButton)cb.getChildAt(last[0] + ((7 - last[1]) * 8))).setImageResource(piece.getResId());
+            if(piece2 != null) {
+                ((ImageButton) cb.getChildAt(last[2] + ((7 - last[3]) * 8))).setImageResource(android.R.drawable.list_selector_background);
+                ((ImageButton) cb.getChildAt(last[0] + ((7 - last[1]) * 8))).setImageResource(piece1.getResId());
+            }else {
+                ((ImageButton) cb.getChildAt(last[2] + ((7 - last[3]) * 8))).setImageResource(piece2.getResId());
+                ((ImageButton) cb.getChildAt(last[0] + ((7 - last[1]) * 8))).setImageResource(piece1.getResId());
+            }
 
-            if(piece != null) {
-                piece.updatePosition(last[0], last[1]);
+            if(piece1 != null) {
+                piece1.updatePosition(last[0], last[1]);
+            }
+
+            if(piece1 != null) {
+                piece1.updatePosition(last[2], last[3]);
             }
 
             turn = !turn;
+            textView.setText(piece1.toString() + piece2.toString());
 
-            textView.setText("" + last[2] + ", " + last[3] + " back to " + last[0] + ", " + last[1]);
         }catch (NullPointerException e){
+            textView.setText("No recent moves");
             //can't undo what hasn't been done
         }
 

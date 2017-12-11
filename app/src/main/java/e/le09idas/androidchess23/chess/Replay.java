@@ -31,7 +31,7 @@ public class Replay {
     }
 
     public void addCoordinates(int xO, int yO, int xD, int yD, int promote, int take){
-        int[] temp = new int[5];
+        int[] temp = new int[6];
         temp[0] = xO;
         temp[1] = yO;
         temp[2] = xD;
