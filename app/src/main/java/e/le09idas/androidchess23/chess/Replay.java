@@ -55,6 +55,14 @@ public class Replay {
         }
     }
 
+    public String lastMoveString(){
+        if(getReplay().size() == 0){
+            return null;
+        }
+        return "" + (char)(getLast()[0] + 97) + "" + (getLast()[1] + 1)+
+                " to " + (char)(getLast()[2] + 97) + "" + (getLast()[3] + 1);
+    }
+
     public Date getDate() {
         return date;
     }

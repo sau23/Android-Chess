@@ -45,7 +45,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
     // variable to simulate switching turns; true means it's white's turn
     private static boolean turn;
 
-    //piece taken during current turn -1 for none, 0+ for pawn, bishop, etc
+    //piece taken during current turn; -1 for none, 0+ for pawn, bishop, etc
     static int take;
 
     // declare list of spaces for check
@@ -65,7 +65,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
 
     private static TextView textView;
 
-    private boolean canUndo = true;
+    private boolean canUndo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +99,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
         Button draw = (Button) findViewById(R.id.draw);
 
         textView = (TextView) findViewById(R.id.status);
+        textView.setText("White's Turn");
 
         // reset variables
         check = false;
@@ -106,6 +107,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
         respondants = new ArrayList<int[]>();
         kingCanMove = false;
         replay = new Replay();
+        canUndo = true;
 
         // set chessboard's buttons' properties
         int size = cb.getChildCount();
@@ -136,7 +138,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
                             // check if piece moved was a promotable pawn
                             if(!checkPawn(board.getPiece(destX, destY))){
                                 replay.addCoordinates(srcX, srcY, destX, destY, -1, take);
-                                textView.setText("took " + board.getTile(destX, destY).inhabitant.toString());
+                                printMove();
                                 continueGame();
 
                                 // reset input vars
@@ -168,7 +170,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
 
     private boolean checkMove(){
         if(srcX == destX && srcY == destY){
-            if (DEBUG) System.out.println("Cannot have same coordinates");
+            textView.setText("Cannot have same coordinates");
             return false;
         }
 
@@ -176,12 +178,12 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
 
         // check if there is a piece in the origin
         if(piece == null) {
-            if (DEBUG) System.out.println("There is no piece at the origin");
+            textView.setText("There is no piece at the origin");
             return false;
 
             // check if the piece is the player's piece
         } else if((piece.color == 'w' && !turn) || (piece.color == 'b' && turn)) {
-            if (DEBUG) System.out.println("Cannot move a piece that isn't yours");
+            textView.setText("Cannot move a piece that isn't yours");
             return false;
         }
 
@@ -219,14 +221,14 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
             }
             System.out.println("dest is on path:" + destIsOnPathToKing);
             if((isRespondant && !destIsOnPathToKing)||(kingCanMove && !movingKing)){
-                if (DEBUG) System.out.println("Solve your check!");
+                textView.setText("Solve your check!");
                 return false;
             }
         }
 
         // attempt to move the selected piece
         if(!piece.checkMove(srcX, srcY, destX, destY, board)) {
-            if (DEBUG) System.out.println("This piece can't move that way!");
+            textView.setText("This piece can't move that way!");
             return false;
         }
 
@@ -250,10 +252,10 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
                 public void onClick(View view) {
                     pawn.promote('B', board);
                     move(destX, destY, destX, destY);
-                    replay.addCoordinates(srcX, srcY, destX, destY, 0, -1);
-                    textView.setText("" + replay.getReplay().size());
+                    replay.addCoordinates(srcX, srcY, destX, destY, 0, take);
+                    textView.setText("" + replay.lastMoveString());
                     continueGame();
-
+                    printMove();
                     // reset input vars
                     srcX = srcY = destX = destY = -1;
                     dialog.cancel();
@@ -265,10 +267,10 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
                 public void onClick(View view) {
                     pawn.promote('N', board);
                     move(destX, destY, destX, destY);
-                    replay.addCoordinates(srcX, srcY, destX, destY, 1 , -1);
-                    textView.setText("" + replay.getReplay().size());
+                    replay.addCoordinates(srcX, srcY, destX, destY, 1 , take);
+                    textView.setText("" + replay.lastMoveString());
                     continueGame();
-
+                    printMove();
                     // reset input vars
                     srcX = srcY = destX = destY = -1;
                     dialog.cancel();
@@ -280,8 +282,8 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
                 public void onClick(View view) {
                     pawn.promote('Q', board);
                     move(destX, destY, destX, destY);
-                    replay.addCoordinates(srcX, srcY, destX, destY, 2, -1);
-                    textView.setText("" + replay.getReplay().size());
+                    replay.addCoordinates(srcX, srcY, destX, destY, 2, take);
+                    printMove();
                     continueGame();
 
                     // reset input vars
@@ -296,8 +298,8 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
                     pawn.promote('R', board);
                     move(destX, destY, destX, destY);
 
-                    replay.addCoordinates(srcX, srcY, destX, destY, 3, -1);
-                    textView.setText("" + replay.getReplay().size());
+                    replay.addCoordinates(srcX, srcY, destX, destY, 3, take);
+                    printMove();
                     continueGame();
 
                     // reset input vars
@@ -344,6 +346,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
         }
         // change turn
         turn = !turn;
+        canUndo = true;
 
         // check for checkmate
         if(check && !kingCanMove && respondants.isEmpty()) {
@@ -396,7 +399,9 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
     public static Piece move(int xO, int yO, int xD, int yD) {
 
         // get piece at origin
-        Piece piece = board.getPiece(xO, yO);
+        Piece piece1 = board.getPiece(xO, yO);
+        Piece piece2 = board.getPiece(xD, yD);
+        textView.setText(piece1.toString());
 
         //assume no piece will be taken at first
         take = -1;
@@ -405,33 +410,37 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
         board.getTile(xO, yO).inhabitant = null;
         if(board.getPiece(xD, yD) != null) {
             //id piece and set take appropriately
-            if(board.getTile(xD, yD).inhabitant != null){
-                switch(board.getTile(xD, yD).inhabitant.type){
-                    case 'P':take = 0;break;
-                    case 'B':take = 1;break;
-                    case 'N':take = 2;break;
-                    case 'Q':take = 3;break;
-                    case 'R':take = 4;break;
-                }
+
+            switch(board.getPiece(xD, yD).type) {
+                case 'p':
+                    take = 0;break;
+                case 'B':
+                    take = 1;break;
+                case 'N':
+                    take = 2;break;
+                case 'Q':
+                    take = 3;break;
+                case 'R':
+                    take = 4;break;
             }
             board.getPiece(xD, yD).isCaptured = true;
+
         }
-        board.getTile(xD, yD).inhabitant = piece;
+        board.getTile(xD, yD).inhabitant = piece1;
 
         // update board in origin and destination to print properly
         board.getTile(xO, yO).resymbol();
         board.getTile(xD, yD).resymbol();
         ((ImageButton)cb.getChildAt(xO + ((7 - yO) * 8))).setImageResource(android.R.drawable.list_selector_background);
-        ((ImageButton)cb.getChildAt(xD + ((7 - yD) * 8))).setImageResource(piece.getResId());
+        ((ImageButton)cb.getChildAt(xD + ((7 - yD) * 8))).setImageResource(piece1.getResId());
 
         // update piece's coordinates if it returns non-null
-        if(piece != null) {
-            piece.updatePosition(xD, yD);
+        if(piece1 != null) {
+            piece1.updatePosition(xD, yD);
         }
 
-        textView.setText("" + xO + ", " + yO + " to " + xD + ", " + yD);
         // return piece just moved
-        return piece;
+        return piece1;
     }
 
     //save game to external storage
@@ -451,67 +460,84 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
     }
 
     void undoMove(){
-        textView.setText("undo start");
-        try {
-            int[] last = new int[6];
-            last = replay.getLast();
-            replay.removeLast();
-            Piece piece1;
-            Piece piece2 = null;
 
-            if(last[4] != -1){
-                piece1 = new Pawn(last[2], last[3], board.getPiece(last[2], last[3]).color, 'P');
-            }else {
-                piece1 = board.getPiece(last[2], last[3]);
-            }
-
-            if(last[5] != -1){
-                char side;
-                if(piece1.color == 'w'){
-                    side = 'b';
-                }else{
-                    side = 'w';
-                }
-
-                switch((char)last[5]){
-                    case 0: piece2 = board.getTile(last[2], last[3]).inhabitant = new Pawn(last[2], last[3], side, 'P'); break;
-                    case 1: piece2 = board.getTile(last[2], last[3]).inhabitant = new Bishop(last[2], last[3], side, 'B'); break;
-                    case 2: piece2 = board.getTile(last[2], last[3]).inhabitant = new Knight(last[2], last[3], side, 'N');break;
-                    case 3: piece2 = board.getTile(last[2], last[3]).inhabitant = new Queen(last[2], last[3], side, 'Q');break;
-                    case 4: piece2 = board.getTile(last[2], last[3]).inhabitant = new Rook(last[2], last[3], side, 'R');break;
-                }
-
-            }
-
-            board.getTile(last[2], last[3]).inhabitant = piece2;
-            board.getTile(last[0], last[1]).inhabitant = piece1;
-
-            board.getTile(last[2], last[3]).resymbol();
-            board.getTile(last[0], last[1]).resymbol();
-
-            if(piece2 != null) {
-                ((ImageButton) cb.getChildAt(last[2] + ((7 - last[3]) * 8))).setImageResource(android.R.drawable.list_selector_background);
-                ((ImageButton) cb.getChildAt(last[0] + ((7 - last[1]) * 8))).setImageResource(piece1.getResId());
-            }else {
-                ((ImageButton) cb.getChildAt(last[2] + ((7 - last[3]) * 8))).setImageResource(piece2.getResId());
-                ((ImageButton) cb.getChildAt(last[0] + ((7 - last[1]) * 8))).setImageResource(piece1.getResId());
-            }
-
-            if(piece1 != null) {
-                piece1.updatePosition(last[0], last[1]);
-            }
-
-            if(piece1 != null) {
-                piece1.updatePosition(last[2], last[3]);
-            }
-
-            turn = !turn;
-            textView.setText(piece1.toString() + piece2.toString());
-
-        }catch (NullPointerException e){
-            textView.setText("No recent moves");
-            //can't undo what hasn't been done
+        if(!canUndo){
+            textView.setText("Can't undo in sucession");
+            return;
+        }
+        if(replay.getReplay().size() == 0){
+            textView.setText("No previous moves");
+            return;
         }
 
+        int[] last;
+        last = replay.getReplay().get(replay.getReplay().size() - 1);
+        replay.removeLast();
+        Piece piece1;
+        Piece piece2 = null;
+
+        if(last[4] != -1){
+            piece1 = new Pawn(last[2], last[3], board.getPiece(last[2], last[3]).color, 'p');
+        }else {
+            piece1 = board.getPiece(last[2], last[3]);
+        }
+
+        if(last[5] != -1){
+            char side;
+            if(piece1.color == 'w'){
+                side = 'b';
+            }else{
+                side = 'w';
+            }
+
+            switch(last[5]){
+                case 0: piece2 = board.getTile(last[2], last[3]).inhabitant = new Pawn(last[2], last[3], side, 'p'); break;
+                case 1: piece2 = board.getTile(last[2], last[3]).inhabitant = new Bishop(last[2], last[3], side, 'B'); break;
+                case 2: piece2 = board.getTile(last[2], last[3]).inhabitant = new Knight(last[2], last[3], side, 'N');break;
+                case 3: piece2 = board.getTile(last[2], last[3]).inhabitant = new Queen(last[2], last[3], side, 'Q');break;
+                case 4: piece2 = board.getTile(last[2], last[3]).inhabitant = new Rook(last[2], last[3], side, 'R');break;
+            }
+
+        }
+
+        board.getTile(last[2], last[3]).inhabitant = piece2;
+        board.getTile(last[0], last[1]).inhabitant = piece1;
+
+        board.getTile(last[2], last[3]).resymbol();
+        board.getTile(last[0], last[1]).resymbol();
+
+        if(piece2 == null) {
+            ((ImageButton) cb.getChildAt(last[2] + ((7 - last[3]) * 8))).setImageResource(android.R.drawable.list_selector_background);
+            ((ImageButton) cb.getChildAt(last[0] + ((7 - last[1]) * 8))).setImageResource(piece1.getResId());
+        }else {
+            ((ImageButton) cb.getChildAt(last[2] + ((7 - last[3]) * 8))).setImageResource(piece2.getResId());
+            ((ImageButton) cb.getChildAt(last[0] + ((7 - last[1]) * 8))).setImageResource(piece1.getResId());
+        }
+
+
+        if(piece1 != null) {
+            piece1.updatePosition(last[0], last[1]);
+        }
+
+        if(piece2 != null) {
+            piece2.updatePosition(last[2], last[3]);
+        }
+
+        printMove();
+        turn = !turn;
+        canUndo = false;
+
+    }
+
+    void printMove(){
+        if(replay.getReplay().size() == 0){
+            textView.setText("No previous moves White's Turn");
+            return;
+        }
+        if(turn){
+            textView.setText(replay.lastMoveString() + " Black's Turn");
+        }else{
+            textView.setText(replay.lastMoveString() + " White's Turn");
+        }
     }
 }
