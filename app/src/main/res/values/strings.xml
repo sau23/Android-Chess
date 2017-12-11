@@ -7,4 +7,7 @@
     <string name="undo">Undo</string>
     <string name="button">Button</string>
     <string name="ai">AI</string>
+    <string name="main_menu">main menu</string>
+    <string name="resign">resign</string>
+    <string name="offer_draw">Offer Draw</string>
 </resources>
