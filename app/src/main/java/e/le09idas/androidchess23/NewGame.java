@@ -140,21 +140,6 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
         System.out.println(clicked_id);
     }
 
-    /*
-    //The next two methods are overrides of ones from the Activity class
-    @Override
-    protected void onPause(){
-        super.onPause();
-        bv.pause();
-    }
-
-    @Override
-    protected void onResume(){
-        super.onResume();
-        bv.resume();
-    }
-    */
-
     private boolean checkMove(){
         if(srcX == destX && srcY == destY){
             if (DEBUG) System.out.println("Cannot have same coordinates");
@@ -177,13 +162,38 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
         // check if input is attempting to move a piece that wasn't found by getRespondants
         // or if input was king
         if(check) {
-            boolean b = kingCanMove;
+
+            boolean isRespondant = false;
             for(int i = 0;i < respondants.size();i++) {
                 int[] cds = respondants.get(i);
-                b = b || (piece.x == cds[0] && piece.y == cds[1]);
+                System.out.println("Checking respondant at " + cds[0] + ", " + cds[1]);
+                isRespondant = isRespondant || (piece.x == cds[0] && piece.y == cds[1]);
             }
-            if(!b) {
+            // add king to respondant check
+            boolean movingKing = false;
+            if(piece.type == 'K'){
+                movingKing = true;
+            }
+            System.out.println("Moving king:" + movingKing);
+            System.out.println("King can move:" + kingCanMove);
+            System.out.println("Is respondant:" + isRespondant);
+
+            //if youre not moving the king or the king cant move and you didnt choose a respondant
+            if(!movingKing && !kingCanMove && !isRespondant) {
                 if (DEBUG) System.out.println("Your king is in check!");
+                return false;
+            }
+
+            boolean destIsOnPathToKing = false;
+            for(int i = 0;i < pathToKing.size();i++) {
+                int[] t = pathToKing.get(i);
+                if(destX == t[0] && destY == t[1]) {
+                    destIsOnPathToKing = true;
+                }
+            }
+            System.out.println("dest is on path:" + destIsOnPathToKing);
+            if((isRespondant && !destIsOnPathToKing)||(kingCanMove && !movingKing)){
+                if (DEBUG) System.out.println("Solve your check!");
                 return false;
             }
         }
