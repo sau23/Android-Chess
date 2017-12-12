@@ -225,13 +225,13 @@ public class Queen extends Piece {
 					}
 				} else {
 					piece = board.getPiece(x + i, y + i);
-					
+
 					// if it is, record the path taken to find the king
 					if(piece.type == 'K' && piece.color != c) {
 						for(int j = 0;x + j < piece.x && y + j < piece.y;j++) {
 							ret.add(new int[] {x + j, y + j});
 						}
-						
+
 					// if its a piece of same color, make sure its covered by this piece's danger zone
 					} else if(piece.color == c) {
 						if(c == 'w') {
@@ -239,8 +239,10 @@ public class Queen extends Piece {
 						} else {
 							board.getTile(x + i, y + i).wDanger = true;
 						}
+						break;
+					} else if(piece.color != c){
+						break;
 					}
-					break;
 				}
 			}
 			
@@ -270,8 +272,10 @@ public class Queen extends Piece {
 						} else {
 							board.getTile(x - i, y + i).wDanger = true;
 						}
+						break;
+					} else if(piece.color != c){
+						break;
 					}
-					break;
 				}
 			}
 			
@@ -301,14 +305,15 @@ public class Queen extends Piece {
 						} else {
 							board.getTile(x + i, y - i).wDanger = true;
 						}
+						break;
+					} else if(piece.color != c){
+						break;
 					}
-					break;
 				}
 			}
 			
 			// check bottom left
 			for(int i = 1;x - i > -1 && y - i > -1;i++) {
-				
 				// search for open tiles
 				if(board.getPiece(x - i, y - i) == null) {
 					if(c == 'w') {
@@ -332,8 +337,10 @@ public class Queen extends Piece {
 						} else {
 							board.getTile(x - i, y - i).wDanger = true;
 						}
+						break;
+					} else if (piece.color != c){
+						break;
 					}
-					break;
 				}
 			}
 			
@@ -367,8 +374,10 @@ public class Queen extends Piece {
 						} else {
 							board.getTile(x, y + i).wDanger = true;
 						}
+						break;
+					} else if(piece.color != c){
+						break;
 					}
-					break;
 				}
 			}
 			
@@ -400,8 +409,10 @@ public class Queen extends Piece {
 						} else {
 							board.getTile(x, y - i).wDanger = true;
 						}
+						break;
+					} else if(piece.color != c){
+						break;
 					}
-					break;
 				}
 			}
 			
@@ -433,8 +444,10 @@ public class Queen extends Piece {
 						} else {
 							board.getTile(x + i, y).wDanger = true;
 						}
+						break;
+					} else if(piece.color != c){
+						break;
 					}
-					break;
 				}
 			}
 			
@@ -466,8 +479,10 @@ public class Queen extends Piece {
 						} else {
 							board.getTile(x - i, y).wDanger = true;
 						}
+						break;
+					} else if(piece.color != c){
+						break;
 					}
-					break;
 				}
 			}
 			

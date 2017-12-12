@@ -12,8 +12,8 @@ package e.le09idas.androidchess23.chess;
 public class Tile {
 	
 	public Piece inhabitant;//piece on tile
-	boolean bDanger;//black king can't go here
-	boolean wDanger;//white king can't go here
+	public boolean bDanger;//black king can't go here
+	public boolean wDanger;//white king can't go here
 	boolean color;//b -> black tile; w -> white tile
 	
 	String symbol;

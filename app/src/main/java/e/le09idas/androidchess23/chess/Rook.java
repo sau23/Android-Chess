@@ -196,8 +196,10 @@ public class Rook extends Piece{
 					} else {
 						board.getTile(x, y + i).wDanger = true;
 					}
+					break;
+				} else if(piece.color != c){
+					break;
 				}
-				break;
 			}
 		}
 		
@@ -229,8 +231,10 @@ public class Rook extends Piece{
 					} else {
 						board.getTile(x, y - i).wDanger = true;
 					}
+					break;
+				} else if(piece.color != c){
+					break;
 				}
-				break;
 			}
 		}
 		
@@ -262,8 +266,10 @@ public class Rook extends Piece{
 					} else {
 						board.getTile(x + i, y).wDanger = true;
 					}
+					break;
+				} else if(piece.color != c){
+					break;
 				}
-				break;
 			}
 		}
 		
@@ -295,8 +301,10 @@ public class Rook extends Piece{
 					} else {
 						board.getTile(x - i, y).wDanger = true;
 					}
+					break;
+				} else if(piece.color != c){
+					break;
 				}
-				break;
 			}
 		}
 		

@@ -95,7 +95,7 @@ public abstract class Piece {
 	 * @param board For reference to its position
 	 * @return If a piece can move
 	 */
-	abstract boolean canMove(Board board);
+	public abstract boolean canMove(Board board);
 	
 	/**
 	 * Updates the board to show "danger zones" - where the king of the opposite 

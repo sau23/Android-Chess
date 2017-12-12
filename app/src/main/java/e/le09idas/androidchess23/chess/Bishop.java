@@ -180,8 +180,10 @@ public class Bishop extends Piece{
 					} else {
 						board.getTile(x + i, y + i).wDanger = true;
 					}
+					break;
+				} else if(piece.color != c){
+					break;
 				}
-				break;
 			}
 		}
 		
@@ -211,8 +213,10 @@ public class Bishop extends Piece{
 					} else {
 						board.getTile(x - i, y + i).wDanger = true;
 					}
+					break;
+				} else if(piece.color != c){
+					break;
 				}
-				break;
 			}
 		}
 		
@@ -242,8 +246,10 @@ public class Bishop extends Piece{
 					} else {
 						board.getTile(x + i, y - i).wDanger = true;
 					}
+					break;
+				} else if(piece.color != c){
+					break;
 				}
-				break;
 			}
 		}
 		
@@ -273,8 +279,10 @@ public class Bishop extends Piece{
 					} else {
 						board.getTile(x - i, y - i).wDanger = true;
 					}
+					break;
+				} else if(piece.color != c){
+					break;
 				}
-				break;
 			}
 		}
 		

@@ -281,7 +281,7 @@ public class Board {
 	 */
 	
 	public ArrayList<int[]> updateDangerZones(boolean turn) {
-		
+
 		clearDangerZones(turn);
 		
 		ArrayList<int[]> ret = new ArrayList<int[]>();
