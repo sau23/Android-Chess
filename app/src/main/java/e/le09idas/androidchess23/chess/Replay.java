@@ -1,9 +1,6 @@
 package e.le09idas.androidchess23.chess;
 
-import android.support.annotation.NonNull;
-
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 
 public class Replay {

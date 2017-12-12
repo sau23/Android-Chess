@@ -3,7 +3,6 @@ package e.le09idas.androidchess23;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -12,8 +11,15 @@ import android.content.Intent;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.lang.Math;
 import e.le09idas.androidchess23.chess.Board;
@@ -22,15 +28,15 @@ import e.le09idas.androidchess23.chess.Pawn;
 import e.le09idas.androidchess23.chess.Bishop;
 import e.le09idas.androidchess23.chess.Knight;
 import e.le09idas.androidchess23.chess.Queen;
-import e.le09idas.androidchess23.chess.Rook;
-import e.le09idas.androidchess23.chess.Piece;
 import e.le09idas.androidchess23.chess.Replay;
 import e.le09idas.androidchess23.chess.ReplayList;
+import e.le09idas.androidchess23.chess.Rook;
+import e.le09idas.androidchess23.chess.Piece;
 
-public class NewGame extends AppCompatActivity implements View.OnClickListener{
+public class NewGame extends AppCompatActivity implements View.OnClickListener {
 
     public static boolean check;//indicates whether or not the game is in check
-    public static int[][] cP = {{2,0}, {6, 0}, {2, 7}, {6, 7}};//castle coord; spaces the king can go to in a castling move
+    public static int[][] cP = {{2, 0}, {6, 0}, {2, 7}, {6, 7}};//castle coord; spaces the king can go to in a castling move
 
     public static GridLayout cb;
 
@@ -62,7 +68,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
     public static ImageButton ib;
 
     // replay moves list
-    private static Replay replay;
+    private Replay replay;
 
     private static TextView status;
 
@@ -75,9 +81,9 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
 
         // set back button properties
         Button goBack = (Button) findViewById(R.id.goBackNG);
-        goBack.setOnClickListener(new View.OnClickListener(){
+        goBack.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 goBack();
             }
         });
@@ -88,9 +94,9 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
 
         // set undo button properties
         Button undo = (Button) findViewById(R.id.undo);
-        undo.setOnClickListener(new View.OnClickListener(){
+        undo.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 undoMove();
             }
         });
@@ -124,32 +130,32 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
 
         // set chessboard's buttons' properties
         int size = cb.getChildCount();
-        for(int i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++) {
             ib = (ImageButton) cb.getChildAt(i);
             final int index = i;
-            ib.setOnClickListener(new View.OnClickListener(){
+            ib.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v){
-                    if(srcX == -1 && srcY == -1){
-                        srcX = index%8;
-                        srcY = 7 - (index/8);
-                        if(board.getPiece(srcX, srcY) == null){
+                public void onClick(View v) {
+                    if (srcX == -1 && srcY == -1) {
+                        srcX = index % 8;
+                        srcY = 7 - (index / 8);
+                        if (board.getPiece(srcX, srcY) == null) {
                             srcX = srcY = -1;
                         }
                     } else {
-                        destX = index%8;
-                        destY = 7 - (index/8);
+                        destX = index % 8;
+                        destY = 7 - (index / 8);
 
-                        if(checkMove()){
+                        if (checkMove()) {
 
                             move(srcX, srcY, destX, destY);
                             // set check back to false since move was legal
-                            if(check) {
+                            if (check) {
                                 check = false;
                             }
 
                             // check if piece moved was a promotable pawn
-                            if(!checkPawn(board.getPiece(destX, destY))){
+                            if (!checkPawn(board.getPiece(destX, destY))) {
                                 replay.addCoordinates(srcX, srcY, destX, destY, -1, take);
                                 printMove();
                                 continueGame();
@@ -170,7 +176,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
     }
 
     //from previous usage of AppCompActivity class
-    private void goBack(){
+    private void goBack() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
@@ -181,8 +187,8 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
         System.out.println(clicked_id);
     }
 
-    private boolean checkMove(){
-        if(srcX == destX && srcY == destY){
+    private boolean checkMove() {
+        if (srcX == destX && srcY == destY) {
             status.setText("Cannot have same coordinates");
             return false;
         }
@@ -190,29 +196,29 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
         Piece piece = board.getPiece(srcX, srcY);
 
         // check if there is a piece in the origin
-        if(piece == null) {
+        if (piece == null) {
             status.setText("There is no piece at the origin");
             return false;
 
             // check if the piece is the player's piece
-        } else if((piece.color == 'w' && !turn) || (piece.color == 'b' && turn)) {
+        } else if ((piece.color == 'w' && !turn) || (piece.color == 'b' && turn)) {
             status.setText("Cannot move a piece that isn't yours");
             return false;
         }
 
         // check if input is attempting to move a piece that wasn't found by getRespondants
         // or if input was king
-        if(check) {
+        if (check) {
 
             boolean isRespondant = false;
-            for(int i = 0;i < respondants.size();i++) {
+            for (int i = 0; i < respondants.size(); i++) {
                 int[] cds = respondants.get(i);
                 System.out.println("Checking respondant at " + cds[0] + ", " + cds[1]);
                 isRespondant = isRespondant || (piece.x == cds[0] && piece.y == cds[1]);
             }
             // add king to respondant check
             boolean movingKing = false;
-            if(piece.type == 'K'){
+            if (piece.type == 'K') {
                 movingKing = true;
             }
             System.out.println("Moving king:" + movingKing);
@@ -220,27 +226,27 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
             System.out.println("Is respondant:" + isRespondant);
 
             //if youre not moving the king or the king cant move and you didnt choose a respondant
-            if(!movingKing && !kingCanMove && !isRespondant) {
+            if (!movingKing && !kingCanMove && !isRespondant) {
                 status.setText("Your king is in check!");
                 return false;
             }
 
             boolean destIsOnPathToKing = false;
-            for(int i = 0;i < pathToKing.size();i++) {
+            for (int i = 0; i < pathToKing.size(); i++) {
                 int[] t = pathToKing.get(i);
-                if(destX == t[0] && destY == t[1]) {
+                if (destX == t[0] && destY == t[1]) {
                     destIsOnPathToKing = true;
                 }
             }
             System.out.println("dest is on path:" + destIsOnPathToKing);
-            if((isRespondant && !destIsOnPathToKing)||(kingCanMove && !movingKing)){
+            if ((isRespondant && !destIsOnPathToKing) || (kingCanMove && !movingKing)) {
                 status.setText("Solve your check!");
                 return false;
             }
         }
 
         // attempt to move the selected piece
-        if(!piece.checkMove(srcX, srcY, destX, destY, board)) {
+        if (!piece.checkMove(srcX, srcY, destX, destY, board)) {
             status.setText("This piece can't move that way!");
             return false;
         }
@@ -248,18 +254,18 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
         return true;
     }
 
-    public boolean checkPawn(Piece piece){
-        if(piece.type != 'p') {
+    public boolean checkPawn(Piece piece) {
+        if (piece.type != 'p') {
             return false;
         }
 
-        final Pawn pawn = (Pawn)piece;
-        if(pawn.canPromote()) {
+        final Pawn pawn = (Pawn) piece;
+        if (pawn.canPromote()) {
             final Dialog dialog = new Dialog(this);
             dialog.setTitle("Choose piece to promote pawn");
             dialog.setContentView(R.layout.activity_promote);
             ImageButton bishop, knight, queen, rook;
-            bishop = (ImageButton)dialog.findViewById(R.id.bishop);
+            bishop = (ImageButton) dialog.findViewById(R.id.bishop);
             bishop.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -274,13 +280,13 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
                     dialog.cancel();
                 }
             });
-            knight = (ImageButton)dialog.findViewById(R.id.knight);
+            knight = (ImageButton) dialog.findViewById(R.id.knight);
             knight.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     pawn.promote('N', board);
                     move(destX, destY, destX, destY);
-                    replay.addCoordinates(srcX, srcY, destX, destY, 1 , take);
+                    replay.addCoordinates(srcX, srcY, destX, destY, 1, take);
                     status.setText("" + replay.lastMoveString());
                     continueGame();
                     printMove();
@@ -289,7 +295,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
                     dialog.cancel();
                 }
             });
-            queen = (ImageButton)dialog.findViewById(R.id.queen);
+            queen = (ImageButton) dialog.findViewById(R.id.queen);
             queen.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -304,7 +310,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
                     dialog.cancel();
                 }
             });
-            rook = (ImageButton)dialog.findViewById(R.id.rook);
+            rook = (ImageButton) dialog.findViewById(R.id.rook);
             rook.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -320,7 +326,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
                     dialog.cancel();
                 }
             });
-            if(piece.color == 'w') {
+            if (piece.color == 'w') {
                 bishop.setImageResource(R.drawable.white_bishop);
                 knight.setImageResource(R.drawable.white_knight);
                 queen.setImageResource(R.drawable.white_queen);
@@ -337,7 +343,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
         return false;
     }
 
-    public void continueGame(){
+    public void continueGame() {
         // update en passant for pawns (cannot capture after player makes move)
         board.updatePawns(!turn);
 
@@ -345,13 +351,13 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
         pathToKing = board.updateDangerZones(turn);
 
         // if a path to the opposite king has been found, king is in check
-        if(!pathToKing.isEmpty()) {
+        if (!pathToKing.isEmpty()) {
 
             // try to find options for opponent
             respondants = board.getRespondants(turn, pathToKing);
 
             // check to see if the king can move for next player's turn
-            King king = !turn ? (King)board.wPieces[0][3] : (King)board.bPieces[0][4];
+            King king = !turn ? (King) board.wPieces[0][3] : (King) board.bPieces[0][4];
             kingCanMove = king.canMove(board);
 
             // opponent's check flag is set
@@ -362,10 +368,10 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
         canUndo = true;
 
         // check for checkmate
-        if(check && !kingCanMove && respondants.isEmpty()) {
+        if (check && !kingCanMove && respondants.isEmpty()) {
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(NewGame.this);
-            if(DEBUG) board.printBoard();
-            if(turn) {
+            if (DEBUG) board.printBoard();
+            if (turn) {
                 alertDialog.setMessage("Black wins!\nSave replay?");
                 replay.setResult("Checkmate! Black Wins!");
             } else {
@@ -376,7 +382,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            int rand = (int)(Math.random() * 50 + 1);
+                            int rand = (int) (Math.random() * 50 + 1);
                             replay.setName("" + rand);
                             try {
                                 saveGame();
@@ -399,10 +405,10 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
             alert.show();
 
             // otherwise if the player is in check, print check and continue
-        } else if(check) {
-            if(turn){
+        } else if (check) {
+            if (turn) {
                 status.setText("White in check!");
-            }else{
+            } else {
                 status.setText("Black in cehck!");
             }
         }
@@ -411,10 +417,10 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
     /**
      * move() moves Piece to a given location after checking its possible locations
      *
-     * @param	xO	Original x coordinate
-     * @param	yO	Original y coordinate
-     * @param	xD	The destination x coordinate
-     * @param	yD	The destination y coordinate
+     * @param    xO    Original x coordinate
+     * @param    yO    Original y coordinate
+     * @param    xD    The destination x coordinate
+     * @param    yD    The destination y coordinate
      */
     public static Piece move(int xO, int yO, int xD, int yD) {
 
@@ -428,20 +434,25 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
 
         // move piece to the destination
         board.getTile(xO, yO).inhabitant = null;
-        if(board.getPiece(xD, yD) != null) {
+        if (board.getPiece(xD, yD) != null) {
             //id piece and set take appropriately
 
-            switch(board.getPiece(xD, yD).type) {
+            switch (board.getPiece(xD, yD).type) {
                 case 'p':
-                    take = 0;break;
+                    take = 0;
+                    break;
                 case 'B':
-                    take = 1;break;
+                    take = 1;
+                    break;
                 case 'N':
-                    take = 2;break;
+                    take = 2;
+                    break;
                 case 'Q':
-                    take = 3;break;
+                    take = 3;
+                    break;
                 case 'R':
-                    take = 4;break;
+                    take = 4;
+                    break;
             }
             board.getPiece(xD, yD).isCaptured = true;
 
@@ -451,11 +462,11 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
         // update board in origin and destination to print properly
         board.getTile(xO, yO).resymbol();
         board.getTile(xD, yD).resymbol();
-        ((ImageButton)cb.getChildAt(xO + ((7 - yO) * 8))).setImageResource(android.R.drawable.list_selector_background);
-        ((ImageButton)cb.getChildAt(xD + ((7 - yD) * 8))).setImageResource(piece1.getResId());
+        ((ImageButton) cb.getChildAt(xO + ((7 - yO) * 8))).setImageResource(android.R.drawable.list_selector_background);
+        ((ImageButton) cb.getChildAt(xD + ((7 - yD) * 8))).setImageResource(piece1.getResId());
 
         // update piece's coordinates if it returns non-null
-        if(piece1 != null) {
+        if (piece1 != null) {
             piece1.updatePosition(xD, yD);
         }
 
@@ -464,29 +475,29 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
     }
 
     //save game to external storage
-    void saveGame() throws IOException, ClassNotFoundException {
+    public void saveGame() throws IOException, ClassNotFoundException {
 
         ReplayList replays = new ReplayList();
-        replays.importList();
+        replays = importList();
         ArrayList<Replay> replayList = replays.getReplayList();
         int i = 0;
-        for(Replay replay : replayList){
-            if(replay.comareTo(replayList.get(i))){
+        for (Replay replay : replayList) {
+            if (replay.comareTo(replayList.get(i))) {
                 return;
             }
         }
         replays.addReplay(replay);
-        replays.exportList();
+        exportList(replays, replay);
 
     }
 
-    void undoMove(){
+    public void undoMove() {
 
-        if(!canUndo){
+        if (!canUndo) {
             status.setText("Can't undo in sucession");
             return;
         }
-        if(replay.getReplay().size() == 0){
+        if (replay.getReplay().size() == 0) {
             status.setText("No previous moves");
             return;
         }
@@ -497,26 +508,36 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
         Piece piece1;
         Piece piece2 = null;
 
-        if(last[4] != -1){
+        if (last[4] != -1) {
             piece1 = new Pawn(last[2], last[3], board.getPiece(last[2], last[3]).color, 'p');
-        }else {
+        } else {
             piece1 = board.getPiece(last[2], last[3]);
         }
 
-        if(last[5] != -1){
+        if (last[5] != -1) {
             char side;
-            if(piece1.color == 'w'){
+            if (piece1.color == 'w') {
                 side = 'b';
-            }else{
+            } else {
                 side = 'w';
             }
 
-            switch(last[5]){
-                case 0: piece2 = board.getTile(last[2], last[3]).inhabitant = new Pawn(last[2], last[3], side, 'p'); break;
-                case 1: piece2 = board.getTile(last[2], last[3]).inhabitant = new Bishop(last[2], last[3], side, 'B'); break;
-                case 2: piece2 = board.getTile(last[2], last[3]).inhabitant = new Knight(last[2], last[3], side, 'N');break;
-                case 3: piece2 = board.getTile(last[2], last[3]).inhabitant = new Queen(last[2], last[3], side, 'Q');break;
-                case 4: piece2 = board.getTile(last[2], last[3]).inhabitant = new Rook(last[2], last[3], side, 'R');break;
+            switch (last[5]) {
+                case 0:
+                    piece2 = board.getTile(last[2], last[3]).inhabitant = new Pawn(last[2], last[3], side, 'p');
+                    break;
+                case 1:
+                    piece2 = board.getTile(last[2], last[3]).inhabitant = new Bishop(last[2], last[3], side, 'B');
+                    break;
+                case 2:
+                    piece2 = board.getTile(last[2], last[3]).inhabitant = new Knight(last[2], last[3], side, 'N');
+                    break;
+                case 3:
+                    piece2 = board.getTile(last[2], last[3]).inhabitant = new Queen(last[2], last[3], side, 'Q');
+                    break;
+                case 4:
+                    piece2 = board.getTile(last[2], last[3]).inhabitant = new Rook(last[2], last[3], side, 'R');
+                    break;
             }
 
         }
@@ -527,20 +548,20 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
         board.getTile(last[2], last[3]).resymbol();
         board.getTile(last[0], last[1]).resymbol();
 
-        if(piece2 == null) {
+        if (piece2 == null) {
             ((ImageButton) cb.getChildAt(last[2] + ((7 - last[3]) * 8))).setImageResource(android.R.drawable.list_selector_background);
             ((ImageButton) cb.getChildAt(last[0] + ((7 - last[1]) * 8))).setImageResource(piece1.getResId());
-        }else {
+        } else {
             ((ImageButton) cb.getChildAt(last[2] + ((7 - last[3]) * 8))).setImageResource(piece2.getResId());
             ((ImageButton) cb.getChildAt(last[0] + ((7 - last[1]) * 8))).setImageResource(piece1.getResId());
         }
 
 
-        if(piece1 != null) {
+        if (piece1 != null) {
             piece1.updatePosition(last[0], last[1]);
         }
 
-        if(piece2 != null) {
+        if (piece2 != null) {
             piece2.updatePosition(last[2], last[3]);
         }
 
@@ -550,10 +571,10 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
 
     }
 
-    void draw(){
+    void draw() {
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(NewGame.this);
         alertDialog.setTitle("Draw Offered! Do You Accept?");
-        if(DEBUG) board.printBoard();
+        if (DEBUG) board.printBoard();
         alertDialog.setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
@@ -561,7 +582,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
                         replay.setResult("Playters Agree to Draw.");
                         alertDialog.setTitle(replay.getResult());
                         alertDialog.show();
-                        int rand = (int)(Math.random() * 50 + 1);
+                        int rand = (int) (Math.random() * 50 + 1);
                         replay.setName("" + rand);
                         try {
                             saveGame();
@@ -581,20 +602,20 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
                         continueGame();
                     }
                 });
-                AlertDialog alert = alertDialog.create();
-                alert.show();
+        AlertDialog alert = alertDialog.create();
+        alert.show();
     }
 
-    void resign(){
+    void resign() {
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(NewGame.this);
         alertDialog.setTitle("Resignation");
         alertDialog.setMessage("Are you sure you want to Resign?");
-        if(DEBUG) board.printBoard();
+        if (DEBUG) board.printBoard();
         alertDialog.setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        if(turn) {
+                        if (turn) {
                             alertDialog.setMessage("White Resigns. Black wins!\nSave replay?");
                             replay.setResult("White Resigns. Black Wins!");
 
@@ -602,7 +623,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
                             alertDialog.setMessage("Black Resigns. White wins!\nSave replay?");
                             replay.setResult("Black Resigns. White Wins!");
                         }
-                        int rand = (int)(Math.random() * 50 + 1);
+                        int rand = (int) (Math.random() * 50 + 1);
                         replay.setName("" + rand);
                         try {
                             saveGame();
@@ -629,15 +650,56 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
         alert.show();
     }
 
-    void printMove(){
-        if(replay.getReplay().size() == 0){
+    void printMove() {
+        if (replay.getReplay().size() == 0) {
             status.setText("No previous moves White's Turn");
             return;
         }
-        if(turn){
+        if (turn) {
             status.setText(replay.lastMoveString() + " Black's Turn");
-        }else{
+        } else {
             status.setText(replay.lastMoveString() + " White's Turn");
         }
+    }
+
+    public ReplayList importList() throws IOException, ClassNotFoundException {
+
+        File file = getFilesDir();
+        ReplayList replays = new ReplayList();
+        if(!(file.exists() && file.isDirectory()) ){
+            file.mkdir();
+            return replays;
+        }
+        try {
+            FileInputStream fin = openFileInput("replays.ser");
+            ObjectInputStream in = new ObjectInputStream(fin);
+            replays = (ReplayList)in.readObject();
+            in.close();
+            fin.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Toast.makeText(this, "Successfully read from" + file.toString()+ "/replays.ser", Toast.LENGTH_SHORT).show();
+        return replays;
+
+    }
+
+    public void exportList(ReplayList replays, Replay replay) {
+
+        File file = getFilesDir();
+        try {
+            FileOutputStream fout = openFileOutput("replays.ser", MODE_PRIVATE);
+            ObjectOutputStream out = new ObjectOutputStream(fout);
+            out.writeObject(replays);
+            out.close();
+            fout.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Toast.makeText(this, "Successfully saved to" + file.toString()+ "/replays.ser", Toast.LENGTH_SHORT).show();
     }
 }
