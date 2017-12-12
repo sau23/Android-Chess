@@ -18,23 +18,28 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.982">
+        app:layout_constraintVertical_bias="1.0">
 
         <Button
             android:id="@+id/resign"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:text="@string/resign"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraintLayout2"
-        android:layout_width="381dp"
+        android:layout_width="384dp"
         android:layout_height="384dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
@@ -66,7 +71,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -76,7 +81,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -86,7 +91,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -96,7 +101,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -106,7 +111,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -116,7 +121,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -126,7 +131,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -136,7 +141,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -146,7 +151,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -156,7 +161,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -166,7 +171,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -176,7 +181,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -186,7 +191,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -196,7 +201,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -206,7 +211,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -216,7 +221,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -226,7 +231,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -236,7 +241,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -246,7 +251,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -256,7 +261,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -266,7 +271,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -276,7 +281,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -286,7 +291,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -296,7 +301,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -306,7 +311,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -316,7 +321,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -326,7 +331,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -336,7 +341,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -346,7 +351,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -356,7 +361,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -366,7 +371,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -376,7 +381,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -386,7 +391,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -396,7 +401,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -406,7 +411,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -416,7 +421,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -426,7 +431,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -436,7 +441,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -446,7 +451,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -456,7 +461,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -466,7 +471,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -476,7 +481,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -486,7 +491,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -496,7 +501,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -506,7 +511,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -516,7 +521,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -526,7 +531,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -536,7 +541,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -546,7 +551,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -556,7 +561,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -566,7 +571,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -576,7 +581,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -586,7 +591,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -596,7 +601,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -606,7 +611,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -616,7 +621,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -626,7 +631,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -636,7 +641,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -646,7 +651,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -656,7 +661,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -666,7 +671,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -676,7 +681,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -686,7 +691,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
 
             <ImageButton
@@ -696,7 +701,7 @@
                 android:adjustViewBounds="true"
                 android:background="@android:drawable/list_selector_background"
                 android:cropToPadding="false"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
                 app:srcCompat="@android:drawable/list_selector_background" />
         </GridLayout>
     </android.support.constraint.ConstraintLayout>
@@ -727,7 +732,7 @@
             android:text="@string/main_menu"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="0.062"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0" />
@@ -737,12 +742,16 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.03"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"
+        app:layout_constraintVertical_bias="1.0">
 
         <Button
             android:id="@+id/ai"
@@ -773,21 +782,27 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.859">
+        app:layout_constraintVertical_bias="0.89">
 
         <Button
             android:id="@+id/draw"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:text="@string/offer_draw"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -812,15 +827,15 @@
             android:text="@string/undo"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintVertical_bias="0.0" />
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
-        android:layout_width="140dp"
-        android:layout_height="31dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
@@ -829,13 +844,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.862">
+        app:layout_constraintVertical_bias="0.86">
 
         <TextView
             android:id="@+id/status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/textview" />
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

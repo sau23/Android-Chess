@@ -91,6 +91,12 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
 
         // set AI button properties
         Button ai = (Button) findViewById(R.id.ai);
+        ai.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
 
         // set undo button properties
         Button undo = (Button) findViewById(R.id.undo);
@@ -149,16 +155,20 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                         if (checkMove()) {
 
                             move(srcX, srcY, destX, destY);
-                            // set check back to false since move was legal
-                            if (check) {
-                                check = false;
-                            }
 
                             // check if piece moved was a promotable pawn
                             if (!checkPawn(board.getPiece(destX, destY))) {
-                                replay.addCoordinates(srcX, srcY, destX, destY, -1, take);
-                                printMove();
-                                continueGame();
+                                replay.addCoordinates(srcX, srcY, destX, destY, -1, -1);
+
+                                if(!kingWillBeInCheck()){
+                                    if (check) {
+                                        check = false;
+                                    }
+                                    continueGame();
+                                } else {
+                                    turn = !turn;
+                                    undoMove();
+                                }
 
                                 // reset input vars
                                 srcX = srcY = destX = destY = -1;
@@ -202,7 +212,13 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
 
             // check if the piece is the player's piece
         } else if ((piece.color == 'w' && !turn) || (piece.color == 'b' && turn)) {
+
             status.setText("Cannot move a piece that isn't yours");
+            return false;
+
+        // check to see if the piece can move to begin with
+        } else if(!piece.canMove(board)){
+            if (DEBUG) System.out.println("This piece cannot move");
             return false;
         }
 
@@ -213,18 +229,12 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
             boolean isRespondant = false;
             for (int i = 0; i < respondants.size(); i++) {
                 int[] cds = respondants.get(i);
-                System.out.println("Checking respondant at " + cds[0] + ", " + cds[1]);
                 isRespondant = isRespondant || (piece.x == cds[0] && piece.y == cds[1]);
             }
-            // add king to respondant check
             boolean movingKing = false;
             if (piece.type == 'K') {
                 movingKing = true;
             }
-            System.out.println("Moving king:" + movingKing);
-            System.out.println("King can move:" + kingCanMove);
-            System.out.println("Is respondant:" + isRespondant);
-
             //if youre not moving the king or the king cant move and you didnt choose a respondant
             if (!movingKing && !kingCanMove && !isRespondant) {
                 status.setText("Your king is in check!");
@@ -239,7 +249,8 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                 }
             }
             System.out.println("dest is on path:" + destIsOnPathToKing);
-            if ((isRespondant && !destIsOnPathToKing) || (kingCanMove && !movingKing)) {
+
+            if((!isRespondant && !destIsOnPathToKing) && (kingCanMove && !movingKing)){
                 status.setText("Solve your check!");
                 return false;
             }
@@ -271,10 +282,18 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                 public void onClick(View view) {
                     pawn.promote('B', board);
                     move(destX, destY, destX, destY);
-                    replay.addCoordinates(srcX, srcY, destX, destY, 0, take);
+                    replay.addCoordinates(srcX, srcY, destX, destY, 0, -1);
                     status.setText("" + replay.lastMoveString());
-                    continueGame();
-                    printMove();
+                    if(!kingWillBeInCheck()){
+                        if (check) {
+                            check = false;
+                        }
+                        continueGame();
+                    } else {
+                        turn = !turn;
+                        undoMove();
+                    }
+
                     // reset input vars
                     srcX = srcY = destX = destY = -1;
                     dialog.cancel();
@@ -286,10 +305,19 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                 public void onClick(View view) {
                     pawn.promote('N', board);
                     move(destX, destY, destX, destY);
+
                     replay.addCoordinates(srcX, srcY, destX, destY, 1, take);
                     status.setText("" + replay.lastMoveString());
-                    continueGame();
-                    printMove();
+                    if(!kingWillBeInCheck()){
+                        if (check) {
+                            check = false;
+                        }
+                        continueGame();
+                    } else {
+                        turn = !turn;
+                        undoMove();
+                    }
+
                     // reset input vars
                     srcX = srcY = destX = destY = -1;
                     dialog.cancel();
@@ -301,9 +329,17 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                 public void onClick(View view) {
                     pawn.promote('Q', board);
                     move(destX, destY, destX, destY);
-                    replay.addCoordinates(srcX, srcY, destX, destY, 2, take);
-                    printMove();
-                    continueGame();
+                    replay.addCoordinates(srcX, srcY, destX, destY, 2, -1);
+                    status.setText("" + replay.lastMoveString());
+                    if(!kingWillBeInCheck()){
+                        if (check) {
+                            check = false;
+                        }
+                        continueGame();
+                    } else {
+                        turn = !turn;
+                        undoMove();
+                    }
 
                     // reset input vars
                     srcX = srcY = destX = destY = -1;
@@ -316,10 +352,17 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                 public void onClick(View view) {
                     pawn.promote('R', board);
                     move(destX, destY, destX, destY);
-
-                    replay.addCoordinates(srcX, srcY, destX, destY, 3, take);
-                    printMove();
-                    continueGame();
+                    replay.addCoordinates(srcX, srcY, destX, destY, 3, -1);
+                    status.setText("" + replay.lastMoveString());
+                    if(!kingWillBeInCheck()){
+                        if (check) {
+                            check = false;
+                        }
+                        continueGame();
+                    } else {
+                        turn = !turn;
+                        undoMove();
+                    }
 
                     // reset input vars
                     srcX = srcY = destX = destY = -1;
@@ -343,7 +386,14 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
         return false;
     }
 
-    public void continueGame() {
+    public boolean kingWillBeInCheck(){
+        if(!board.updateDangerZones(!turn).isEmpty()){
+            return true;
+        }
+        return false;
+    }
+
+    public void continueGame(){
         // update en passant for pawns (cannot capture after player makes move)
         board.updatePawns(!turn);
 
@@ -422,7 +472,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
      * @param    xD    The destination x coordinate
      * @param    yD    The destination y coordinate
      */
-    public static Piece move(int xO, int yO, int xD, int yD) {
+    public static void move(int xO, int yO, int xD, int yD) {
 
         // get piece at origin
         Piece piece1 = board.getPiece(xO, yO);
@@ -455,7 +505,6 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                     break;
             }
             board.getPiece(xD, yD).isCaptured = true;
-
         }
         board.getTile(xD, yD).inhabitant = piece1;
 
@@ -469,9 +518,6 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
         if (piece1 != null) {
             piece1.updatePosition(xD, yD);
         }
-
-        // return piece just moved
-        return piece1;
     }
 
     //save game to external storage
