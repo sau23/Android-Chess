@@ -13,8 +13,9 @@ import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.util.ArrayList;
-
+import java.lang.Math;
 import e.le09idas.androidchess23.chess.Board;
 import e.le09idas.androidchess23.chess.King;
 import e.le09idas.androidchess23.chess.Pawn;
@@ -63,7 +64,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
     // replay moves list
     private static Replay replay;
 
-    private static TextView textView;
+    private static TextView status;
 
     private boolean canUndo;
 
@@ -95,11 +96,23 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
         });
 
         Button resign = (Button) findViewById(R.id.resign);
+        resign.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                resign();
+            }
+        });
 
         Button draw = (Button) findViewById(R.id.draw);
+        draw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                draw();
+            }
+        });
 
-        textView = (TextView) findViewById(R.id.status);
-        textView.setText("White's Turn");
+        status = (TextView) findViewById(R.id.status);
+        status.setText("White's Turn");
 
         // reset variables
         check = false;
@@ -170,7 +183,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
 
     private boolean checkMove(){
         if(srcX == destX && srcY == destY){
-            textView.setText("Cannot have same coordinates");
+            status.setText("Cannot have same coordinates");
             return false;
         }
 
@@ -178,12 +191,12 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
 
         // check if there is a piece in the origin
         if(piece == null) {
-            textView.setText("There is no piece at the origin");
+            status.setText("There is no piece at the origin");
             return false;
 
             // check if the piece is the player's piece
         } else if((piece.color == 'w' && !turn) || (piece.color == 'b' && turn)) {
-            textView.setText("Cannot move a piece that isn't yours");
+            status.setText("Cannot move a piece that isn't yours");
             return false;
         }
 
@@ -208,7 +221,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
 
             //if youre not moving the king or the king cant move and you didnt choose a respondant
             if(!movingKing && !kingCanMove && !isRespondant) {
-                if (DEBUG) System.out.println("Your king is in check!");
+                status.setText("Your king is in check!");
                 return false;
             }
 
@@ -221,14 +234,14 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
             }
             System.out.println("dest is on path:" + destIsOnPathToKing);
             if((isRespondant && !destIsOnPathToKing)||(kingCanMove && !movingKing)){
-                textView.setText("Solve your check!");
+                status.setText("Solve your check!");
                 return false;
             }
         }
 
         // attempt to move the selected piece
         if(!piece.checkMove(srcX, srcY, destX, destY, board)) {
-            textView.setText("This piece can't move that way!");
+            status.setText("This piece can't move that way!");
             return false;
         }
 
@@ -253,7 +266,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
                     pawn.promote('B', board);
                     move(destX, destY, destX, destY);
                     replay.addCoordinates(srcX, srcY, destX, destY, 0, take);
-                    textView.setText("" + replay.lastMoveString());
+                    status.setText("" + replay.lastMoveString());
                     continueGame();
                     printMove();
                     // reset input vars
@@ -268,7 +281,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
                     pawn.promote('N', board);
                     move(destX, destY, destX, destY);
                     replay.addCoordinates(srcX, srcY, destX, destY, 1 , take);
-                    textView.setText("" + replay.lastMoveString());
+                    status.setText("" + replay.lastMoveString());
                     continueGame();
                     printMove();
                     // reset input vars
@@ -354,16 +367,24 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
             if(DEBUG) board.printBoard();
             if(turn) {
                 alertDialog.setMessage("Black wins!\nSave replay?");
-                System.out.println("Black wins");
+                replay.setResult("Checkmate! Black Wins!");
             } else {
                 alertDialog.setMessage("White wins!\nSave replay?");
-                System.out.println("White wins");
+                replay.setResult("Checkmate! White Wins!");
             }
             alertDialog.setCancelable(false)
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            // append moves list to static list of moves lists
+                            int rand = (int)(Math.random() * 50 + 1);
+                            replay.setName("" + rand);
+                            try {
+                                saveGame();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } catch (ClassNotFoundException e) {
+                                e.printStackTrace();
+                            }
                             finish();
                         }
                     })
@@ -376,14 +397,13 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
             AlertDialog alert = alertDialog.create();
             alert.setTitle("Checkmate");
             alert.show();
-            System.out.println("Checkmate");
 
             // otherwise if the player is in check, print check and continue
         } else if(check) {
             if(turn){
-                textView.setText("White in check!");
+                status.setText("White in check!");
             }else{
-                textView.setText("Black in cehck!");
+                status.setText("Black in cehck!");
             }
         }
     }
@@ -401,7 +421,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
         // get piece at origin
         Piece piece1 = board.getPiece(xO, yO);
         Piece piece2 = board.getPiece(xD, yD);
-        textView.setText(piece1.toString());
+        status.setText(piece1.toString());
 
         //assume no piece will be taken at first
         take = -1;
@@ -444,9 +464,10 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
     }
 
     //save game to external storage
-    void saveGame(){
+    void saveGame() throws IOException, ClassNotFoundException {
 
-        ReplayList replays = ReplayList.importList();
+        ReplayList replays = new ReplayList();
+        replays.importList();
         ArrayList<Replay> replayList = replays.getReplayList();
         int i = 0;
         for(Replay replay : replayList){
@@ -455,18 +476,18 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
             }
         }
         replays.addReplay(replay);
-        ReplayList.exportList();
+        replays.exportList();
 
     }
 
     void undoMove(){
 
         if(!canUndo){
-            textView.setText("Can't undo in sucession");
+            status.setText("Can't undo in sucession");
             return;
         }
         if(replay.getReplay().size() == 0){
-            textView.setText("No previous moves");
+            status.setText("No previous moves");
             return;
         }
 
@@ -529,15 +550,94 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener{
 
     }
 
+    void draw(){
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(NewGame.this);
+        alertDialog.setTitle("Draw Offered! Do You Accept?");
+        if(DEBUG) board.printBoard();
+        alertDialog.setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        replay.setResult("Playters Agree to Draw.");
+                        alertDialog.setTitle(replay.getResult());
+                        alertDialog.show();
+                        int rand = (int)(Math.random() * 50 + 1);
+                        replay.setName("" + rand);
+                        try {
+                            saveGame();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (ClassNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                        finish();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        alertDialog.setTitle("Game is still on!");
+                        alertDialog.show();
+                        continueGame();
+                    }
+                });
+                AlertDialog alert = alertDialog.create();
+                alert.show();
+    }
+
+    void resign(){
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(NewGame.this);
+        alertDialog.setTitle("Resignation");
+        alertDialog.setMessage("Are you sure you want to Resign?");
+        if(DEBUG) board.printBoard();
+        alertDialog.setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if(turn) {
+                            alertDialog.setMessage("White Resigns. Black wins!\nSave replay?");
+                            replay.setResult("White Resigns. Black Wins!");
+
+                        } else {
+                            alertDialog.setMessage("Black Resigns. White wins!\nSave replay?");
+                            replay.setResult("Black Resigns. White Wins!");
+                        }
+                        int rand = (int)(Math.random() * 50 + 1);
+                        replay.setName("" + rand);
+                        try {
+                            saveGame();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (ClassNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                        AlertDialog alert = alertDialog.create();
+                        alert.show();
+                        finish();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        alertDialog.setMessage("The game continus!");
+                        AlertDialog alert = alertDialog.create();
+                        alert.show();
+                        finish();
+                    }
+                });
+        AlertDialog alert = alertDialog.create();
+        alert.show();
+    }
+
     void printMove(){
         if(replay.getReplay().size() == 0){
-            textView.setText("No previous moves White's Turn");
+            status.setText("No previous moves White's Turn");
             return;
         }
         if(turn){
-            textView.setText(replay.lastMoveString() + " Black's Turn");
+            status.setText(replay.lastMoveString() + " Black's Turn");
         }else{
-            textView.setText(replay.lastMoveString() + " White's Turn");
+            status.setText(replay.lastMoveString() + " White's Turn");
         }
     }
 }

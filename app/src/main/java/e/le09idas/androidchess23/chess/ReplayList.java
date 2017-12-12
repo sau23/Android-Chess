@@ -3,11 +3,16 @@ package e.le09idas.androidchess23.chess;
 import android.os.Environment;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
+import org.w3c.dom.EntityReference;
+
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -19,6 +24,7 @@ import static java.util.Collections.sort;
 
 public class ReplayList implements Parcelable, Serializable{
 
+    public static final String LOG_TAG = "ANDROID-CHESS-23";
     private static ArrayList<Replay> replayList;
 
     public ReplayList(){
@@ -42,37 +48,41 @@ public class ReplayList implements Parcelable, Serializable{
         return replayList;
     }
     // function to read from stored data
-    public static ReplayList importList(){
+    public static void importList() throws IOException, ClassNotFoundException {
 
-        String games = Environment.getExternalStorageDirectory().getPath() + "/AndroidChess23/replays.data";
 
-        try {
-            ObjectInputStream is = new ObjectInputStream(new FileInputStream(games));
-            replayList = (ArrayList<Replay>) is.readObject();
-            is.close();
-        } catch(ClassNotFoundException e){
-            e.printStackTrace();
-        }catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        /*if (isSDReadable()) {
+
+            File list = new File(Environment.getExternalStoragePublicDirectory(Environment.MEDIA_SHARED), "replays.ser");
+            if (!(list.exists() && list.isDirectory())) {
+                replayList = new ArrayList<>();
+                list.mkdir();
+                return;
+            }
+            String root = list.getAbsolutePath();
+            try{
+                ObjectInput in = new ObjectInputStream(new FileInputStream(root));
+                replayList = (ArrayList<Replay>) in.readObject();
+                in.close();
+            }catch (IOException e){
+
+            }catch (ClassNotFoundException e){
+                e.printStackTrace();
+            }
+
+
+        }*/
     }
 
-    // function to write to stored data
-    public static void exportList() {
+    public static void exportList(){
         if(isSDWritable()){
-
-            String games = Environment.getExternalStorageDirectory().getPath() + "/AndroidChess23/replays.data";
-
-            try {
-                ObjectOutputStream os = new ObjectOutputStream((new FileOutputStream(games)));
-                os.writeObject(replayList);
-                os.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            try{
+                ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(
+                        new File(Environment.getExternalStoragePublicDirectory(Environment.MEDIA_SHARED)
+                                .getAbsolutePath() + "replays.ser")));
+                out.writeObject(replayList);
+                out.close();
+            }catch(IOException e){
                 e.printStackTrace();
             }
         }
@@ -123,5 +133,12 @@ public class ReplayList implements Parcelable, Serializable{
         }
     };
 
+    public String[] stringList(){
+        String[] list = new String[replayList.size()];
+        for(int i = 0; i < replayList.size(); i++){
+            list[i] = replayList.get(i).toString();
+        }
+        return list;
+    }
 
 }

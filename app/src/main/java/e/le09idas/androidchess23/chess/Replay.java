@@ -11,11 +11,13 @@ public class Replay {
     private ArrayList<int[]> coordinates;
     private String name;
     private Date date;
+    private String result;
 
     public Replay(){
         this.coordinates = new ArrayList<int[]>();
         this.name = "";
-        Date date = new Date();
+        date = new Date();
+        result = null;
     }
 
     public String getName(){
@@ -79,5 +81,18 @@ public class Replay {
             return false;
         }
     }
+
+    public String getResult(){
+        return result;
+    }
+
+    public void setResult(String result){
+        this.result = result;
+    }
+
+    public String toString(){
+        return this.name + this.date.toString();
+    }
+
 
 }
