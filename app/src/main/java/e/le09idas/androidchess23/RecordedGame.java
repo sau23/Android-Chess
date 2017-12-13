@@ -12,10 +12,18 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.Collections;
+
 import e.le09idas.androidchess23.chess.Replay;
 import e.le09idas.androidchess23.chess.ReplayList;
+import e.le09idas.androidchess23.chess.SortByDate;
+import e.le09idas.androidchess23.chess.SortByName;
 
 public class RecordedGame extends AppCompatActivity {
+
+    private ListView records;
+
+    private ArrayAdapter<Replay> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,8 +31,8 @@ public class RecordedGame extends AppCompatActivity {
 
         setContentView(R.layout.activity_choose_replay);
         ReplayList.readFromData();
-        ListView records = (ListView)findViewById(R.id.records);
-        ListAdapter adapter = new ArrayAdapter<Replay>(this, android.R.layout.simple_expandable_list_item_1, ReplayList.getReplayList());
+        records = (ListView)findViewById(R.id.records);
+        adapter = new ArrayAdapter<Replay>(this, android.R.layout.simple_expandable_list_item_1, ReplayList.getReplayList());
         records.setAdapter(adapter);
 
         records.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -45,6 +53,28 @@ public class RecordedGame extends AppCompatActivity {
                 goBack();
             }
         });
+
+        Button sortDate = (Button)findViewById(R.id.sortDate);
+        sortDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                adapter.sort(new SortByDate());
+                adapter.notifyDataSetChanged();
+                records.setAdapter(adapter);
+            }
+        });
+
+        Button sortName = (Button)findViewById(R.id.sortName);
+        sortName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                adapter.sort(new SortByName());
+                adapter.notifyDataSetChanged();
+                records.setAdapter(adapter);
+            }
+        });
+
+
     }
 
     private void goBack(){
