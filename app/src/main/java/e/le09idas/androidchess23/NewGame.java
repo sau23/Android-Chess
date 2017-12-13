@@ -299,7 +299,6 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                     destIsOnPathToKing = true;
                 }
             }
-            System.out.println("dest is on path:" + destIsOnPathToKing);
 
             if((!isRespondant && !destIsOnPathToKing) && (kingCanMove && !movingKing)){
                 status.setText("Solve your check!");
@@ -567,7 +566,6 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
 
         // get piece at origin
         Piece piece1 = board.getPiece(xO, yO);
-        Piece piece2 = board.getPiece(xD, yD);
         status.setText(piece1.toString());
 
         //assume no piece will be taken at first
@@ -691,15 +689,23 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
     }
 
     void draw() {
-        Toast.makeText(NewGame.this, "Offering draw", Toast.LENGTH_SHORT).show();
+
+        // dialog box for agreeing to draw
+        //Toast.makeText(NewGame.this, "Offering draw", Toast.LENGTH_SHORT).show();
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(NewGame.this);
-        alertDialog.setTitle("Draw Offered! Do You Accept?");
-        if (DEBUG) board.printBoard();
+        alertDialog.setTitle("Draw");
+        alertDialog.setMessage("Offered! Do you accept?");
         alertDialog.setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        replay.setResult("Playters Agree to Draw.");
+                        Toast.makeText(NewGame.this, "Draw", Toast.LENGTH_SHORT).show();
+                        replay.setResult("Players Agree to Draw.");
+                        // TODO: need proper naming system here
+                        replay.setName("");
+                        askSave();
+                        /*
+                        replay.setResult("Players Agree to Draw.");
                         alertDialog.setTitle(replay.getResult());
                         int rand = (int) (Math.random() * 50 + 1);
                         replay.setName("" + rand);
@@ -711,30 +717,41 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                         } catch (ClassNotFoundException e) {
                             e.printStackTrace();
                         }
-                        finish();
+                        //finish();
+                        */
+                        dialogInterface.dismiss();
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(NewGame.this, "Draw cancelled", Toast.LENGTH_SHORT).show();
+                        /*
                         alertDialog.setTitle("Game is still on!");
                         alertDialog.show();
                         continueGame();
+                        */
+                        dialogInterface.dismiss();
                     }
                 });
-        AlertDialog alert = alertDialog.create();
-        alert.show();
+        alertDialog.create().show();
     }
 
     void resign() {
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(NewGame.this);
         alertDialog.setTitle("Resignation");
-        alertDialog.setMessage("Are you sure you want to Resign?");
-        if (DEBUG) board.printBoard();
+        alertDialog.setMessage("Are you sure you want to resign?");
         alertDialog.setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        if(turn){
+                            replay.setResult("White Resigns. Black Wins!");
+                        } else {
+                            replay.setResult("Black Resigns. White Wins!");
+                        }
+                        askSave();
+                        /*
                         if (turn) {
                             alertDialog.setMessage("White Resigns. Black wins!\nSave replay?");
                             replay.setResult("White Resigns. Black Wins!");
@@ -755,19 +772,52 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                         AlertDialog alert = alertDialog.create();
                         alert.show();
                         finish();
+                        */
+                        dialogInterface.dismiss();
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        alertDialog.setMessage("The game continus!");
+                        Toast.makeText(NewGame.this, "Resignation cancelled", Toast.LENGTH_SHORT).show();
+                        /*
+                        alertDialog.setMessage("The game continues!");
                         AlertDialog alert = alertDialog.create();
                         alert.show();
                         finish();
+                        */
+                        dialogInterface.dismiss();
                     }
                 });
-        AlertDialog alert = alertDialog.create();
-        alert.show();
+        alertDialog.create().show();
+    }
+
+    void askSave(){
+        final AlertDialog.Builder askSave = new AlertDialog.Builder(NewGame.this);
+        askSave.setTitle("Save Replay");
+        askSave.setMessage("Do you want to save the replay?");
+        askSave.setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        try {
+                            Toast.makeText(NewGame.this, "Trying to save", Toast.LENGTH_SHORT).show();
+                            saveGame();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (ClassNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                        finish();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+                    }
+                });
+        askSave.create().show();
     }
 
     void printMove() {
