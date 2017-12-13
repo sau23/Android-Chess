@@ -18,6 +18,7 @@ public class ReplayList{
 
     private static ArrayList<Replay> replayList;
     private static String path;
+    private static Replay selected;
 
     public ReplayList(){
         replayList = new ArrayList<Replay>();
@@ -35,6 +36,14 @@ public class ReplayList{
         return replayList;
     }
     // function to read from stored data
+
+    public static void setSelected(Replay r){
+        selected = r;
+    }
+
+    public static Replay getSelected(){
+        return selected;
+    }
 
     public void sortByDate(){
         Collections.sort(replayList, new SortByDate());

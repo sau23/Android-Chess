@@ -208,7 +208,8 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                         if (checkMove()) {
 
                             move(srcX, srcY, destX, destY);
-
+                            System.out.println(srcX + ", " + srcY);
+                            System.out.println(destX + ", " + destY);
                             // check if piece moved was a promotable pawn
                             if (!checkPawn(board.getPiece(destX, destY), false)) {
                                 replay.addCoordinates(srcX, srcY, destX, destY, -1, take);
@@ -235,12 +236,13 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
         }
 
         // create new board instance
-        board = new Board(cb);
+        board = new Board(cb, false);
     }
 
     //from previous usage of AppCompActivity class
     private void goBack() {
         Intent intent = new Intent(this, MainActivity.class);
+        finish();
         startActivity(intent);
     }
 
@@ -541,7 +543,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            finish();
+                            goBack();
                         }
                     });
             AlertDialog alert = alertDialog.create();
@@ -764,7 +766,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        finish();
+                        goBack();
                     }
                 });
         askSave.create().show();
@@ -782,7 +784,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         replay.setName(textView.getText().toString());
                         ReplayList.writeToData(replay);
-                        finish();
+                        goBack();
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -811,4 +813,5 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
     void printDebug(String input){
         Toast.makeText(NewGame.this, input, Toast.LENGTH_SHORT).show();
     }
+
 }

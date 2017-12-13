@@ -2,6 +2,7 @@ package e.le09idas.androidchess23.chess;
 
 import android.widget.GridLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 
@@ -24,10 +25,10 @@ public class Board {
 	/**
 	 * Board constructor using {@link #initPieces()} and {@link #initBoard()}
 	 */
-	public Board(GridLayout chessboard){
+	public Board(GridLayout chessboard, boolean isReplay){
 		cb = chessboard;
 		this.initPieces();
-		this.initBoard();
+		this.initBoard(isReplay);
 	}
 	
 	/**
@@ -70,7 +71,7 @@ public class Board {
 	/**
 	 * initBoard() puts the pieces from the rosters onto the board.
 	 */
-	void initBoard(){
+	void initBoard(boolean isReplay){
 		
 		//the white side being set up
 		this.board[7][0] = new Tile(this.bPieces[0][0], false, false, true, this.bPieces[0][0].toString());
@@ -170,7 +171,11 @@ public class Board {
 		for(int y = 7; y > -1; y--) {
 			for(int x = 0; x < 8; x++){
 				if(board[y][x].inhabitant != null) {
-					((ImageButton) cb.getChildAt(i)).setImageResource(board[y][x].inhabitant.getResId());
+					if(!isReplay) {
+						((ImageButton) cb.getChildAt(i)).setImageResource(board[y][x].inhabitant.getResId());
+					} else {
+						((ImageView) cb.getChildAt(i)).setImageResource(board[y][x].inhabitant.getResId());
+					}
 				}
 				i++;
 			}

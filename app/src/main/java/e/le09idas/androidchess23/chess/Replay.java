@@ -38,7 +38,7 @@ public class Replay implements Serializable{
         temp[3] = yD;
         temp[4] = promote;
         temp[5] = take;
-        this.coordinates.add(temp);
+        this.coordinates.add(0, temp);
     }
 
     public int[] getLast(){

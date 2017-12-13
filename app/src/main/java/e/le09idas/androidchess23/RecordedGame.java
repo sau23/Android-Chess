@@ -31,7 +31,10 @@ public class RecordedGame extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Replay selected = (Replay) adapterView.getItemAtPosition(i);
-                Toast.makeText(RecordedGame.this, selected.toString(), Toast.LENGTH_SHORT).show();
+                ReplayList.setSelected(selected);
+                showGame();
+                //Toast.makeText(RecordedGame.this, selected.toString(), Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -46,6 +49,13 @@ public class RecordedGame extends AppCompatActivity {
 
     private void goBack(){
         Intent intent = new Intent(this, MainActivity.class);
+        finish();
         startActivity(intent);
+    }
+
+    private void showGame(){
+        Intent rep = new Intent(this, Game.class);
+        finish();
+        startActivity(rep);
     }
 }

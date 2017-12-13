@@ -38,11 +38,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void gotToNewGame(){
         Intent intent = new Intent(this, NewGame.class);
+        finish();
         startActivity(intent);
     }
 
     private void gotToReplayGame(){
         Intent intent = new Intent(this, RecordedGame.class);
+        finish();
         startActivity(intent);
     }
 

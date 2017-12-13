@@ -21,6 +21,7 @@
         </activity>
         <activity android:name=".NewGame" />
         <activity android:name=".RecordedGame"></activity>
+        <activity android:name=".Game" />
     </application>
 
 </manifest>
