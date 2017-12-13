@@ -72,7 +72,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
 
     private static TextView status;
 
-    private boolean canUndo;
+    private Button undo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,7 +150,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
         });
 
         // set undo button properties
-        Button undo = (Button) findViewById(R.id.undo);
+        undo = (Button) findViewById(R.id.undo);
         undo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -183,7 +183,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
         respondants = new ArrayList<int[]>();
         kingCanMove = false;
         replay = new Replay();
-        canUndo = true;
+        undo.setEnabled(true);
 
         // set chessboard's buttons' properties
         int size = cb.getChildCount();
@@ -506,7 +506,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
         }
         // change turn
         turn = !turn;
-        canUndo = true;
+        undo.setEnabled(true);
 
         // check for checkmate
         if (check && !kingCanMove && respondants.isEmpty()) {
@@ -611,31 +611,12 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
         }
     }
 
-    //save game to external storage
-    public void saveGame() throws IOException, ClassNotFoundException {
 
-        ReplayList replays = new ReplayList();
-        replays = importList();
-        ArrayList<Replay> replayList = replays.getReplayList();
-        int i = 0;
-        for (Replay replay : replayList) {
-            if (replay.comareTo(replayList.get(i))) {
-                return;
-            }
-        }
-        replays.addReplay(replay);
-        exportList(replays, replay);
-
-    }
 
     public void undoMove() {
 
-        if (!canUndo) {
-            status.setText("Can't undo in sucession");
-            return;
-        }
         if (replay.getReplay().size() == 0) {
-            status.setText("No previous moves");
+            printDebug("No previous moves");
             return;
         }
 
@@ -704,11 +685,13 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
 
         printMove();
         turn = !turn;
-        canUndo = false;
+        undo.setEnabled(false);
+
 
     }
 
     void draw() {
+        Toast.makeText(NewGame.this, "Offering draw", Toast.LENGTH_SHORT).show();
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(NewGame.this);
         alertDialog.setTitle("Draw Offered! Do You Accept?");
         if (DEBUG) board.printBoard();
@@ -718,10 +701,10 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         replay.setResult("Playters Agree to Draw.");
                         alertDialog.setTitle(replay.getResult());
-                        alertDialog.show();
                         int rand = (int) (Math.random() * 50 + 1);
                         replay.setName("" + rand);
                         try {
+                            Toast.makeText(NewGame.this, "Trying to save", Toast.LENGTH_SHORT).show();
                             saveGame();
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -799,44 +782,106 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
         }
     }
 
-    public ReplayList importList() throws IOException, ClassNotFoundException {
+    //save game to external storage
+    public void saveGame() throws IOException, ClassNotFoundException {
 
-        File file = getFilesDir();
-        ReplayList replays = new ReplayList();
-        if(!(file.exists() && file.isDirectory()) ){
-            file.mkdir();
+        Toast.makeText(NewGame.this, "Attempting to save game", Toast.LENGTH_SHORT).show();
+        ReplayList replays = importList();
+        if(replays == null){
+            printDebug("Error importing list");
+            return;
+        }
+        if(replays.getReplayList().size() == 0){
+            replays.addReplay(replay);
+
+            if(!exportList(replays)){
+                printDebug("Error exporting replay to list");
+                return;
+            }
+            Toast.makeText(NewGame.this, "List was empty; saved new one", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        for(int i = 0; i < replays.getReplayList().size(); i++){
+            if(replays.getReplayList().get(i).comareTo(replay) == true){
+                Toast.makeText(NewGame.this, "Game of that name already exists; try another name", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+        replays.addReplay(replay);
+        if(!exportList(replays)){
+            printDebug("Error exporting replay to list");
+            return;
+        }
+        Toast.makeText(NewGame.this, "Replay added to list successfully", Toast.LENGTH_SHORT).show();
+
+    }
+    public ReplayList importList(){
+
+        printDebug("importing list from " + getApplicationContext().getFilesDir().getPath() + "/replays.ser");
+
+        ReplayList replays = null;
+        File file = new File(getApplicationContext().getFilesDir().getPath() + "/replays.ser");
+
+        if(!(file.exists() && file.isFile())){
+            replays = new ReplayList();
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return replays;
         }
-        try {
-            FileInputStream fin = openFileInput("replays.ser");
+
+        try{
+            FileInputStream fin = new FileInputStream(getApplicationContext().getFilesDir().getPath() + "/replays.ser");
             ObjectInputStream in = new ObjectInputStream(fin);
+
+            printDebug("attempting to read from " + getApplicationContext().getFilesDir().getPath() + "/replays.ser");
+
             replays = (ReplayList)in.readObject();
             in.close();
             fin.close();
 
-        } catch (IOException e) {
+        }catch(IOException e){
             e.printStackTrace();
+            printDebug("Error IOException trying to read replays.ser");
+            return null;
+        }catch(ClassNotFoundException e){
+            e.printStackTrace();
+            printDebug("Error ClassNotFoundException trying to cast serial");
+            return null;
         }
-        Toast.makeText(this, "Successfully read from" + file.toString()+ "/replays.ser", Toast.LENGTH_SHORT).show();
-        return replays;
-
+        return new ReplayList();
     }
 
-    public void exportList(ReplayList replays, Replay replay) {
+    public boolean exportList(ReplayList replays){
 
-        File file = getFilesDir();
+        replays.addReplay(replay);
+
+        printDebug("exporting  list to " + getApplicationContext().getFilesDir().getPath() + "/replays.ser");
+
         try {
-            FileOutputStream fout = openFileOutput("replays.ser", MODE_PRIVATE);
+
+            FileOutputStream fout = new FileOutputStream(getApplicationContext().getFilesDir().getPath() + "/replays.ser");
             ObjectOutputStream out = new ObjectOutputStream(fout);
+
+            printDebug("attempting to write to replays.ser");
+
             out.writeObject(replays);
             out.close();
             fout.close();
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            printDebug("successfully exported new replay");
+            return true;
+        }catch (IOException i){
+            i.printStackTrace();
+            printDebug("Error IOException: failed to export new replay");
+            return false;
         }
-        Toast.makeText(this, "Successfully saved to" + file.toString()+ "/replays.ser", Toast.LENGTH_SHORT).show();
+
+    }
+
+    void printDebug(String input){
+        Toast.makeText(NewGame.this, input, Toast.LENGTH_SHORT).show();
     }
 }

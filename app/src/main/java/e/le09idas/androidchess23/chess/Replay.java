@@ -59,7 +59,8 @@ public class Replay {
             return null;
         }
         return "" + (char)(getLast()[0] + 97) + "" + (getLast()[1] + 1)+
-                " to " + (char)(getLast()[2] + 97) + "" + (getLast()[3] + 1);
+                " to " + (char)(getLast()[2] + 97) + "" + (getLast()[3] + 1)+
+                " p = " + getLast()[4] + " t = " + getLast()[5];
     }
 
     public Date getDate() {
