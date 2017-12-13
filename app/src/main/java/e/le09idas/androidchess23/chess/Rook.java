@@ -143,11 +143,10 @@ public class Rook extends Piece{
 				(board.getPiece(this.x + 1, this.y) == null || board.getPiece(this.x + 1, this.y).color == this.color))
 			return true;
 		//check left
-			if(this.isBound(this.x - 1, this.y + 1) &&
-					(board.getPiece(this.x - 1, this.y + 1) == null || board.getPiece(this.x - 1, this.y + 1).color == this.color))
+		if(this.isBound(this.x - 1, this.y) &&
+				(board.getPiece(this.x - 1, this.y) == null || board.getPiece(this.x - 1, this.y).color == this.color))
 			return true;
 		return false;
-
 	}
 
 	/**

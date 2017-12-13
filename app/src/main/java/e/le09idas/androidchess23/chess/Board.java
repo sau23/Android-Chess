@@ -19,8 +19,6 @@ public class Board {
 	Tile[][] board = new Tile[8][8];//the board
 	public Piece[][] bPieces = new Piece[2][8];//black roster
 	public Piece[][] wPieces = new Piece[2][8];//white roster
-	boolean wCanMove = true;//sees if white can move
-	boolean bCanMove = true;//sees if black can move
 	GridLayout cb;
 	
 	/**

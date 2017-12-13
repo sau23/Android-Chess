@@ -95,6 +95,57 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
             @Override
             public void onClick(View view) {
 
+                // get a random piece that can move based on turn
+                Piece[][] pieces = turn ? board.wPieces : board.bPieces;
+
+                // since it might take forever to find if a piece can move, if you cant find a new space in 10 iterations,
+                // choose a new piece to move
+                int count;
+                boolean prevTurn = turn;
+                while(true) {
+                    count = 0;
+                    int i = (int) (2 * Math.random()), j = (int) (8 * Math.random());
+                    while (pieces[i][j].isCaptured || !pieces[i][j].canMove(board)) {
+                        i = (int) (2 * Math.random());
+                        j = (int) (8 * Math.random());
+                    }
+
+                    // move the piece
+                    srcX = pieces[i][j].x;
+                    srcY = pieces[i][j].y;
+                    while (prevTurn == turn) {
+                        destX = (int) (8 * Math.random());
+                        destY = (int) (8 * Math.random());
+                        if (checkMove()) {
+                            move(srcX, srcY, destX, destY);
+
+                            // check if piece moved was a promotable pawn
+                            if (!checkPawn(board.getPiece(destX, destY), true)) {
+                                replay.addCoordinates(srcX, srcY, destX, destY, -1, -1);
+
+                                if (!kingWillBeInCheck()) {
+                                    if (check) {
+                                        check = false;
+                                    }
+                                    continueGame();
+                                } else {
+                                    turn = !turn;
+                                    undoMove();
+                                }
+                            }
+                        }
+                        if(count > 10){
+                            break;
+                        }
+                        count++;
+                    }
+                    if(prevTurn != turn){
+                        break;
+                    }
+                }
+
+                // reset input vars
+                srcX = srcY = destX = destY = -1;
             }
         });
 
@@ -157,7 +208,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                             move(srcX, srcY, destX, destY);
 
                             // check if piece moved was a promotable pawn
-                            if (!checkPawn(board.getPiece(destX, destY))) {
+                            if (!checkPawn(board.getPiece(destX, destY), false)) {
                                 replay.addCoordinates(srcX, srcY, destX, destY, -1, -1);
 
                                 if(!kingWillBeInCheck()){
@@ -265,122 +316,162 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
         return true;
     }
 
-    public boolean checkPawn(Piece piece) {
+    public boolean checkPawn(Piece piece, boolean isAI) {
         if (piece.type != 'p') {
             return false;
         }
 
         final Pawn pawn = (Pawn) piece;
         if (pawn.canPromote()) {
-            final Dialog dialog = new Dialog(this);
-            dialog.setTitle("Choose piece to promote pawn");
-            dialog.setContentView(R.layout.activity_promote);
-            ImageButton bishop, knight, queen, rook;
-            bishop = (ImageButton) dialog.findViewById(R.id.bishop);
-            bishop.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    pawn.promote('B', board);
-                    move(destX, destY, destX, destY);
-                    replay.addCoordinates(srcX, srcY, destX, destY, 0, -1);
-                    status.setText("" + replay.lastMoveString());
-                    if(!kingWillBeInCheck()){
-                        if (check) {
-                            check = false;
-                        }
-                        continueGame();
-                    } else {
-                        turn = !turn;
-                        undoMove();
-                    }
-
-                    // reset input vars
-                    srcX = srcY = destX = destY = -1;
-                    dialog.cancel();
+            if(isAI){
+                int i = (int)(4 * Math.random());
+                switch(i){
+                    default:
+                    case 0:
+                        pawn.promote('B', board);
+                        move(destX, destY, destX, destY);
+                        replay.addCoordinates(srcX, srcY, destX, destY, 0, -1);
+                        break;
+                    case 1:
+                        pawn.promote('N', board);
+                        move(destX, destY, destX, destY);
+                        replay.addCoordinates(srcX, srcY, destX, destY, 1, -1);
+                        break;
+                    case 2:
+                        pawn.promote('Q', board);
+                        move(destX, destY, destX, destY);
+                        replay.addCoordinates(srcX, srcY, destX, destY, 2, -1);
+                        break;
+                    case 3:
+                        pawn.promote('R', board);
+                        move(destX, destY, destX, destY);
+                        replay.addCoordinates(srcX, srcY, destX, destY, 3, -1);
+                        break;
                 }
-            });
-            knight = (ImageButton) dialog.findViewById(R.id.knight);
-            knight.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    pawn.promote('N', board);
-                    move(destX, destY, destX, destY);
-
-                    replay.addCoordinates(srcX, srcY, destX, destY, 1, take);
-                    status.setText("" + replay.lastMoveString());
-                    if(!kingWillBeInCheck()){
-                        if (check) {
-                            check = false;
-                        }
-                        continueGame();
-                    } else {
-                        turn = !turn;
-                        undoMove();
+                status.setText("" + replay.lastMoveString());
+                if (!kingWillBeInCheck()) {
+                    if (check) {
+                        check = false;
                     }
-
-                    // reset input vars
-                    srcX = srcY = destX = destY = -1;
-                    dialog.cancel();
+                    continueGame();
+                } else {
+                    turn = !turn;
+                    undoMove();
                 }
-            });
-            queen = (ImageButton) dialog.findViewById(R.id.queen);
-            queen.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    pawn.promote('Q', board);
-                    move(destX, destY, destX, destY);
-                    replay.addCoordinates(srcX, srcY, destX, destY, 2, -1);
-                    status.setText("" + replay.lastMoveString());
-                    if(!kingWillBeInCheck()){
-                        if (check) {
-                            check = false;
-                        }
-                        continueGame();
-                    } else {
-                        turn = !turn;
-                        undoMove();
-                    }
 
-                    // reset input vars
-                    srcX = srcY = destX = destY = -1;
-                    dialog.cancel();
-                }
-            });
-            rook = (ImageButton) dialog.findViewById(R.id.rook);
-            rook.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    pawn.promote('R', board);
-                    move(destX, destY, destX, destY);
-                    replay.addCoordinates(srcX, srcY, destX, destY, 3, -1);
-                    status.setText("" + replay.lastMoveString());
-                    if(!kingWillBeInCheck()){
-                        if (check) {
-                            check = false;
-                        }
-                        continueGame();
-                    } else {
-                        turn = !turn;
-                        undoMove();
-                    }
+                // reset input vars
+                srcX = srcY = destX = destY = -1;
 
-                    // reset input vars
-                    srcX = srcY = destX = destY = -1;
-                    dialog.cancel();
-                }
-            });
-            if (piece.color == 'w') {
-                bishop.setImageResource(R.drawable.white_bishop);
-                knight.setImageResource(R.drawable.white_knight);
-                queen.setImageResource(R.drawable.white_queen);
-                rook.setImageResource(R.drawable.white_rook);
             } else {
-                bishop.setImageResource(R.drawable.black_bishop);
-                knight.setImageResource(R.drawable.black_knight);
-                queen.setImageResource(R.drawable.black_queen);
-                rook.setImageResource(R.drawable.black_rook);
+                final Dialog dialog = new Dialog(this);
+                dialog.setTitle("Choose piece to promote pawn");
+                dialog.setContentView(R.layout.activity_promote);
+                ImageButton bishop, knight, queen, rook;
+                bishop = (ImageButton) dialog.findViewById(R.id.bishop);
+                bishop.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        pawn.promote('B', board);
+                        move(destX, destY, destX, destY);
+                        replay.addCoordinates(srcX, srcY, destX, destY, 0, -1);
+                        status.setText("" + replay.lastMoveString());
+                        if (!kingWillBeInCheck()) {
+                            if (check) {
+                                check = false;
+                            }
+                            continueGame();
+                        } else {
+                            turn = !turn;
+                            undoMove();
+                        }
+
+                        // reset input vars
+                        srcX = srcY = destX = destY = -1;
+                        dialog.cancel();
+                    }
+                });
+                knight = (ImageButton) dialog.findViewById(R.id.knight);
+                knight.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        pawn.promote('N', board);
+                        move(destX, destY, destX, destY);
+                        replay.addCoordinates(srcX, srcY, destX, destY, 1, -1);
+                        status.setText("" + replay.lastMoveString());
+                        if (!kingWillBeInCheck()) {
+                            if (check) {
+                                check = false;
+                            }
+                            continueGame();
+                        } else {
+                            turn = !turn;
+                            undoMove();
+                        }
+
+                        // reset input vars
+                        srcX = srcY = destX = destY = -1;
+                        dialog.cancel();
+                    }
+                });
+                queen = (ImageButton) dialog.findViewById(R.id.queen);
+                queen.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        pawn.promote('Q', board);
+                        move(destX, destY, destX, destY);
+                        replay.addCoordinates(srcX, srcY, destX, destY, 2, -1);
+                        status.setText("" + replay.lastMoveString());
+                        if (!kingWillBeInCheck()) {
+                            if (check) {
+                                check = false;
+                            }
+                            continueGame();
+                        } else {
+                            turn = !turn;
+                            undoMove();
+                        }
+
+                        // reset input vars
+                        srcX = srcY = destX = destY = -1;
+                        dialog.cancel();
+                    }
+                });
+                rook = (ImageButton) dialog.findViewById(R.id.rook);
+                rook.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        pawn.promote('R', board);
+                        move(destX, destY, destX, destY);
+                        replay.addCoordinates(srcX, srcY, destX, destY, 3, -1);
+                        status.setText("" + replay.lastMoveString());
+                        if (!kingWillBeInCheck()) {
+                            if (check) {
+                                check = false;
+                            }
+                            continueGame();
+                        } else {
+                            turn = !turn;
+                            undoMove();
+                        }
+
+                        // reset input vars
+                        srcX = srcY = destX = destY = -1;
+                        dialog.cancel();
+                    }
+                });
+                if (piece.color == 'w') {
+                    bishop.setImageResource(R.drawable.white_bishop);
+                    knight.setImageResource(R.drawable.white_knight);
+                    queen.setImageResource(R.drawable.white_queen);
+                    rook.setImageResource(R.drawable.white_rook);
+                } else {
+                    bishop.setImageResource(R.drawable.black_bishop);
+                    knight.setImageResource(R.drawable.black_knight);
+                    queen.setImageResource(R.drawable.black_queen);
+                    rook.setImageResource(R.drawable.black_rook);
+                }
+                dialog.show();
             }
-            dialog.show();
             return true;
         }
         return false;
@@ -459,7 +550,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
             if (turn) {
                 status.setText("White in check!");
             } else {
-                status.setText("Black in cehck!");
+                status.setText("Black in check!");
             }
         }
     }
