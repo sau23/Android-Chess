@@ -122,7 +122,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
 
                             // check if piece moved was a promotable pawn
                             if (!checkPawn(board.getPiece(destX, destY), true)) {
-                                replay.addCoordinates(srcX, srcY, destX, destY, -1, -1);
+                                replay.addCoordinates(srcX, srcY, destX, destY, -1, take);
 
                                 if (!kingWillBeInCheck()) {
                                     if (check) {
@@ -185,6 +185,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
         kingCanMove = false;
         replay = new Replay();
         undo.setEnabled(true);
+        take = -1;
 
         // set chessboard's buttons' properties
         int size = cb.getChildCount();
@@ -210,8 +211,8 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
 
                             // check if piece moved was a promotable pawn
                             if (!checkPawn(board.getPiece(destX, destY), false)) {
-                                replay.addCoordinates(srcX, srcY, destX, destY, -1, -1);
-
+                                replay.addCoordinates(srcX, srcY, destX, destY, -1, take);
+                                printDebug(replay.lastMoveString());
                                 if(!kingWillBeInCheck()){
                                     if (check) {
                                         check = false;
@@ -250,6 +251,8 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
     }
 
     private boolean checkMove() {
+
+
         if (srcX == destX && srcY == destY) {
             status.setText("Cannot have same coordinates");
             return false;
@@ -328,24 +331,28 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                 switch(i){
                     default:
                     case 0:
+                        replay.addCoordinates(srcX, srcY, destX, destY, 0, take);
                         pawn.promote('B', board);
                         move(destX, destY, destX, destY);
-                        replay.addCoordinates(srcX, srcY, destX, destY, 0, -1);
+                        printDebug(replay.lastMoveString());
                         break;
                     case 1:
+                        replay.addCoordinates(srcX, srcY, destX, destY, 1, take);
                         pawn.promote('N', board);
                         move(destX, destY, destX, destY);
-                        replay.addCoordinates(srcX, srcY, destX, destY, 1, -1);
+                        printDebug(replay.lastMoveString());
                         break;
                     case 2:
-                        pawn.promote('Q', board);
+                        replay.addCoordinates(srcX, srcY, destX, destY, 2, take);
                         move(destX, destY, destX, destY);
-                        replay.addCoordinates(srcX, srcY, destX, destY, 2, -1);
+                        pawn.promote('Q', board);
+                        printDebug(replay.lastMoveString());
                         break;
                     case 3:
+                        replay.addCoordinates(srcX, srcY, destX, destY, 3, take);
                         pawn.promote('R', board);
                         move(destX, destY, destX, destY);
-                        replay.addCoordinates(srcX, srcY, destX, destY, 3, -1);
+                        printDebug(replay.lastMoveString());
                         break;
                 }
                 status.setText("" + replay.lastMoveString());
@@ -371,9 +378,10 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                 bishop.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        replay.addCoordinates(srcX, srcY, destX, destY, 0, take);
                         pawn.promote('B', board);
                         move(destX, destY, destX, destY);
-                        replay.addCoordinates(srcX, srcY, destX, destY, 0, -1);
+                        printDebug(replay.lastMoveString());
                         status.setText("" + replay.lastMoveString());
                         if (!kingWillBeInCheck()) {
                             if (check) {
@@ -394,9 +402,10 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                 knight.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        replay.addCoordinates(srcX, srcY, destX, destY, 1, take);
                         pawn.promote('N', board);
                         move(destX, destY, destX, destY);
-                        replay.addCoordinates(srcX, srcY, destX, destY, 1, -1);
+                        printDebug(replay.lastMoveString());
                         status.setText("" + replay.lastMoveString());
                         if (!kingWillBeInCheck()) {
                             if (check) {
@@ -417,9 +426,10 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                 queen.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        replay.addCoordinates(srcX, srcY, destX, destY, 2, take);
                         pawn.promote('Q', board);
                         move(destX, destY, destX, destY);
-                        replay.addCoordinates(srcX, srcY, destX, destY, 2, -1);
+                        printDebug(replay.lastMoveString());
                         status.setText("" + replay.lastMoveString());
                         if (!kingWillBeInCheck()) {
                             if (check) {
@@ -440,9 +450,10 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                 rook.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        replay.addCoordinates(srcX, srcY, destX, destY, 3, take);
                         pawn.promote('R', board);
                         move(destX, destY, destX, destY);
-                        replay.addCoordinates(srcX, srcY, destX, destY, 3, -1);
+                        printDebug(replay.lastMoveString());
                         status.setText("" + replay.lastMoveString());
                         if (!kingWillBeInCheck()) {
                             if (check) {
@@ -616,8 +627,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
         }
 
         int[] last;
-        last = replay.getReplay().get(replay.getReplay().size() - 1);
-        replay.removeLast();
+        last = replay.getLast();
         Piece piece1;
         Piece piece2 = null;
 
@@ -628,6 +638,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
         }
 
         if (last[5] != -1) {
+
             char side;
             if (piece1.color == 'w') {
                 side = 'b';
@@ -680,6 +691,10 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
         printMove();
         turn = !turn;
         undo.setEnabled(false);
+        replay.removeLast();
+        board.updateDangerZones(turn);
+        printDebug(replay.lastMoveString());
+
     }
 
     void draw() {
@@ -692,7 +707,6 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Toast.makeText(NewGame.this, "Draw", Toast.LENGTH_SHORT).show();
                         replay.setResult("Players Agree to Draw.");
                         dialogInterface.dismiss();
                         askSave();
