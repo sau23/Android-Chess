@@ -1,40 +1,37 @@
 package e.le09idas.androidchess23.chess;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import java.io.Serializable;
+import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-
-
 import static java.util.Collections.sort;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 public class ReplayList{
 
-
-    private ArrayList<Replay> replayList;
+    private static ArrayList<Replay> replayList;
+    private static String path;
 
     public ReplayList(){
         replayList = new ArrayList<Replay>();
     }
 
-    public void addReplay(Replay replay){
-        replayList.add(replay);
+    public static void setPath(String s){
+        path = s + "/chess";
     }
 
-    public Replay getReplay(int index){
+    public static Replay getReplay(int index){
         return replayList.get(index);
     }
 
-    // unnecessary?
-    public void removeReplay(int index){
-        replayList.remove(index);
-    }
-
-    public ArrayList<Replay> getReplayList(){
+    public static ArrayList<Replay> getReplayList(){
         return replayList;
     }
     // function to read from stored data
@@ -47,13 +44,56 @@ public class ReplayList{
         Collections.sort(replayList, new SortByName());
     }
 
-    public String[] stringList(){
-        String[] list = new String[replayList.size()];
-        for(int i = 0; i < replayList.size(); i++){
-            list[i] = replayList.get(i).toString();
+    public static void readFromData(){
+
+        File f = new File(path);
+
+        // make a new directory for data
+        if (!(f.exists() && f.isDirectory())) {
+            replayList = new ArrayList<Replay>();
+            f.mkdir();
+            return;
         }
-        return list;
+
+        // instantiate the replay list
+        replayList = new ArrayList<Replay>();
+        for(File file : f.listFiles()){
+            try {
+                ObjectInputStream in = new ObjectInputStream(new FileInputStream(file.getPath()));
+                Replay replay = (Replay)in.readObject();
+                replayList.add(replay);
+                in.close();
+                System.out.println("Successfully read file");
+            } catch (IOException e){
+                System.out.println("IO exception reading file");
+            } catch (ClassNotFoundException c){
+                System.out.println("This shouldn't happen");
+            }
+        }
     }
 
+    public static void writeToData(Replay replay){
+        File f = new File(path);
 
+        // make a new directory for data
+        if (!(f.exists() && f.isDirectory())) {
+            replayList = new ArrayList<Replay>();
+            f.mkdir();
+        } else if (replayList == null) {
+            replayList = new ArrayList<Replay>();
+        }
+
+        if(replayList == null){
+            replayList = new ArrayList<Replay>();
+        }
+        replayList.add(replay);
+        try{
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(path + "/" + replay.getName() + ".data"));
+            out.writeObject(replay);
+            out.close();
+            System.out.println("Successfully wrote file");
+        } catch (IOException e){
+            System.out.println("IO exception writing file");
+        }
+    }
 }

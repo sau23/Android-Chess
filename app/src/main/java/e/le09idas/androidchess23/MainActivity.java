@@ -8,12 +8,16 @@ import android.view.View;
 import android.widget.Button;
 import android.content.Intent;
 
+import e.le09idas.androidchess23.chess.ReplayList;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
+
+        ReplayList.setPath(getApplicationContext().getFilesDir().getPath());
 
         Button newGame = (Button) findViewById(R.id.button3);
         newGame.setOnClickListener(new View.OnClickListener(){

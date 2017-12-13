@@ -51,7 +51,6 @@ public class King extends Piece{
 		   (xD == cP[1][0] && yD == cP[1][1]) ||
 		   (xD == cP[2][0] && yD == cP[2][1]) ||
 		   (xD == cP[3][0] && yD == cP[3][1]))){
-			
 			return checkCastle(xD, yD, board);//if one of the castling positions are requested; this is called
 			
 		}

@@ -2,8 +2,9 @@ package e.le09idas.androidchess23.chess;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.io.Serializable;
 
-public class Replay {
+public class Replay implements Serializable{
 
     private ArrayList<int[]> coordinates;
     private String name;
@@ -89,8 +90,7 @@ public class Replay {
     }
 
     public String toString(){
-        return this.name + this.date.toString();
+        return this.name + " - "  + this.result + " at " +  this.date.toString();
     }
-
 
 }

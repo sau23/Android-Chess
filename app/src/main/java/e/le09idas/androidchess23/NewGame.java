@@ -523,16 +523,8 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            int rand = (int) (Math.random() * 50 + 1);
-                            replay.setName("" + rand);
-                            try {
-                                saveGame();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            } catch (ClassNotFoundException e) {
-                                e.printStackTrace();
-                            }
-                            finish();
+                            dialogInterface.dismiss();
+                            promptReplay();
                         }
                     })
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -567,7 +559,9 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
 
         // get piece at origin
         Piece piece = board.getPiece(xO, yO);
-        status.setText(piece.toString());
+        if(piece != null) {
+            status.setText(piece.toString());
+        }
 
         //assume no piece will be taken at first
         take = -1;
@@ -575,8 +569,8 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
         // move piece to the destination
         board.getTile(xO, yO).inhabitant = null;
         if (board.getPiece(xD, yD) != null) {
-            //id piece and set take appropriately
 
+            //id piece and set take appropriately
             switch (board.getPiece(xD, yD).type) {
                 case 'p':
                     take = 0;
@@ -602,7 +596,11 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
         board.getTile(xO, yO).resymbol();
         board.getTile(xD, yD).resymbol();
         ((ImageButton) cb.getChildAt(xO + ((7 - yO) * 8))).setImageResource(android.R.drawable.list_selector_background);
-        ((ImageButton) cb.getChildAt(xD + ((7 - yD) * 8))).setImageResource(piece.getResId());
+        if(piece != null) {
+            ((ImageButton) cb.getChildAt(xD + ((7 - yD) * 8))).setImageResource(piece.getResId());
+        } else {
+            ((ImageButton) cb.getChildAt(xD + ((7 - yD) * 8))).setImageResource(android.R.drawable.list_selector_background);
+        }
 
         // update piece's coordinates if it returns non-null
         if (piece != null) {
@@ -687,7 +685,6 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
     void draw() {
 
         // dialog box for agreeing to draw
-        //Toast.makeText(NewGame.this, "Offering draw", Toast.LENGTH_SHORT).show();
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(NewGame.this);
         alertDialog.setTitle("Draw");
         alertDialog.setMessage("Offered! Do you accept?");
@@ -697,8 +694,8 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Toast.makeText(NewGame.this, "Draw", Toast.LENGTH_SHORT).show();
                         replay.setResult("Players Agree to Draw.");
-                        replay.setName("");
                         dialogInterface.dismiss();
+                        askSave();
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -770,14 +767,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         replay.setName(textView.getText().toString());
-                        try {
-                            Toast.makeText(NewGame.this, "Trying to save", Toast.LENGTH_SHORT).show();
-                            saveGame();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (ClassNotFoundException e) {
-                            e.printStackTrace();
-                        }
+                        ReplayList.writeToData(replay);
                         finish();
                     }
                 })
@@ -785,7 +775,8 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Toast.makeText(NewGame.this, "Cancelling save", Toast.LENGTH_SHORT);
-                        finish();
+                        dialogInterface.dismiss();
+                        askSave();
                     }
                 });
         promptReplay.create().show();
@@ -801,105 +792,6 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
         } else {
             status.setText(replay.lastMoveString() + " White's Turn");
         }
-    }
-
-    //save game to external storage
-    public void saveGame() throws IOException, ClassNotFoundException {
-
-        Toast.makeText(NewGame.this, "Attempting to save game", Toast.LENGTH_SHORT).show();
-        ReplayList replays = importList();
-        if(replays == null){
-            printDebug("Error importing list");
-            return;
-        }
-        if(replays.getReplayList().size() == 0){
-            replays.addReplay(replay);
-
-            if(!exportList(replays)){
-                printDebug("Error exporting replay to list");
-                return;
-            }
-            Toast.makeText(NewGame.this, "List was empty; saved new one", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        for(int i = 0; i < replays.getReplayList().size(); i++){
-            if(replays.getReplayList().get(i).comareTo(replay) == true){
-                Toast.makeText(NewGame.this, "Game of that name already exists; try another name", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }
-        replays.addReplay(replay);
-        if(!exportList(replays)){
-            printDebug("Error exporting replay to list");
-            return;
-        }
-        Toast.makeText(NewGame.this, "Replay added to list successfully", Toast.LENGTH_SHORT).show();
-
-    }
-    public ReplayList importList(){
-
-        printDebug("importing list from " + getApplicationContext().getFilesDir().getPath() + "/replays.ser");
-
-        ReplayList replays = null;
-        File file = new File(getApplicationContext().getFilesDir().getPath() + "/replays.ser");
-
-        if(!(file.exists() && file.isFile())){
-            replays = new ReplayList();
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return replays;
-        }
-
-        try{
-            FileInputStream fin = new FileInputStream(getApplicationContext().getFilesDir().getPath() + "/replays.ser");
-            ObjectInputStream in = new ObjectInputStream(fin);
-
-            printDebug("attempting to read from " + getApplicationContext().getFilesDir().getPath() + "/replays.ser");
-
-            replays = (ReplayList)in.readObject();
-            in.close();
-            fin.close();
-
-        }catch(IOException e){
-            e.printStackTrace();
-            printDebug("Error IOException trying to read replays.ser");
-            return null;
-        }catch(ClassNotFoundException e){
-            e.printStackTrace();
-            printDebug("Error ClassNotFoundException trying to cast serial");
-            return null;
-        }
-        return new ReplayList();
-    }
-
-    public boolean exportList(ReplayList replays){
-
-        replays.addReplay(replay);
-
-        printDebug("exporting  list to " + getApplicationContext().getFilesDir().getPath() + "/replays.ser");
-
-        try {
-
-            FileOutputStream fout = new FileOutputStream(getApplicationContext().getFilesDir().getPath() + "/replays.ser");
-            ObjectOutputStream out = new ObjectOutputStream(fout);
-
-            printDebug("attempting to write to replays.ser");
-
-            out.writeObject(replays);
-            out.close();
-            fout.close();
-
-            printDebug("successfully exported new replay");
-            return true;
-        }catch (IOException i){
-            i.printStackTrace();
-            printDebug("Error IOException: failed to export new replay");
-            return false;
-        }
-
     }
 
     void printDebug(String input){
