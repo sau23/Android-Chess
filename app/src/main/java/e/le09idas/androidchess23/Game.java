@@ -40,7 +40,7 @@ public class Game extends AppCompatActivity{
         });
 
         final Button next = (Button)findViewById(R.id.next);
-        if(index == 0){
+        if(index == -1){
             next.setEnabled(false);
         }
         next.setOnClickListener(new View.OnClickListener() {
