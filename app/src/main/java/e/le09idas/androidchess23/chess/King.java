@@ -47,12 +47,14 @@ public class King extends Piece{
 
 		//king can move omni-directionally 1
 		//king not only has to consider collisions with pieces but also danger zones
+		// if any of the destinations move the king to a castle spot
 		if(((xD == cP[0][0] && yD == cP[0][1]) ||
 		   (xD == cP[1][0] && yD == cP[1][1]) ||
 		   (xD == cP[2][0] && yD == cP[2][1]) ||
 		   (xD == cP[3][0] && yD == cP[3][1]))){
-			return checkCastle(xD, yD, board);//if one of the castling positions are requested; this is called
-			
+			if(checkCastle(xD, yD, board)){//if one of the castling positions are requested; this is called
+				return true;
+			}
 		}
 				
 		
