@@ -12,9 +12,8 @@ import java.util.Collections;
 
 import static java.util.Collections.sort;
 
-public class ReplayList implements Parcelable, Serializable{
+public class ReplayList{
 
-    private static final long serialVersionUID = 10234L;
 
     private ArrayList<Replay> replayList;
 
@@ -47,28 +46,6 @@ public class ReplayList implements Parcelable, Serializable{
     public void sortByName(){
         Collections.sort(replayList, new SortByName());
     }
-
-    @Override
-    public int describeContents(){
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags){
-        //dest.writeTypedList(this.replayList);
-    }
-
-    public static final Creator<ReplayList> CREATOR = new Creator<ReplayList>() {
-        @Override
-        public ReplayList createFromParcel(Parcel parcel) {
-            return null;
-        }
-
-        @Override
-        public ReplayList[] newArray(int i) {
-            return new ReplayList[0];
-        }
-    };
 
     public String[] stringList(){
         String[] list = new String[replayList.size()];
