@@ -12,7 +12,7 @@ import java.util.Collections;
 
 import static java.util.Collections.sort;
 
-public class ReplayList{
+public class ReplayList implements Serializable{
 
 
     private ArrayList<Replay> replayList;

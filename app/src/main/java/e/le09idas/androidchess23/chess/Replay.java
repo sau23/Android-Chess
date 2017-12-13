@@ -1,9 +1,10 @@
 package e.le09idas.androidchess23.chess;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Replay {
+public class Replay implements Serializable {
 
     private ArrayList<int[]> coordinates;
     private String name;
