@@ -21,15 +21,8 @@ public class Game extends AppCompatActivity{
     private static ArrayList<int[]> replay;
     private int index;
 
-    public static int take = -1;
-    public static int promo = -1;
-    public static int special = -1;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
-
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_replay);
@@ -57,7 +50,7 @@ public class Game extends AppCompatActivity{
                 System.out.println(moves[0] + ", " + moves[1]);
                 System.out.println(moves[2] + ", " + moves[3]);
                 System.out.println(moves[5]);
-                move(moves[0], moves[1], moves[2], moves[3]);
+                move(moves[0], moves[1], moves[2], moves[3], moves[5]);
                 index--;
                 if(index == -1){
                     next.setEnabled(false);
@@ -73,7 +66,7 @@ public class Game extends AppCompatActivity{
         finish();
         startActivity(intent);
     }
-    public static void move(int xO, int yO, int xD, int yD) {
+    public static void move(int xO, int yO, int xD, int yD, int take) {
 
         // get piece at origin
         Piece piece = board.getPiece(xO, yO);
