@@ -26,8 +26,8 @@ public class Pawn extends Piece {
 	 * 
 	 * @param	x	The starting x position
 	 * @param	y	The starting y position
-	 * @param	c	The color expressed as 'b' for black or 'w' for white
-	 * @param	t	The type expressed as 'p' for pawn
+	 * @param	side	The color expressed as 'b' for black or 'w' for white
+	 * @param	type	The type expressed as 'p' for pawn
 	 * 
 	 * @return	a new pawn piece
 	 */
@@ -125,7 +125,9 @@ public class Pawn extends Piece {
 					if(pawn.enPassant) {
 						
 						// move a guaranteed blank space over the pawn to be captured
-						NewGame.move(xD, yD, xD, yD - 1);
+						//NewGame.move(xD, yD, xD, yD - 1);
+
+						NewGame.move(xD, yD - 1, xD, yD);
 						return true;
 					}
 				}
@@ -190,7 +192,9 @@ public class Pawn extends Piece {
 					if(pawn.enPassant) {
 						
 						// move a guaranteed blank space over the pawn to be captured
-						NewGame.move(xD, yD, xD, yD + 1);
+						//NewGame.move(xD, yD, xD, yD + 1);
+
+						NewGame.move(xD, yD + 1, xD, yD);
 						return true;
 					}
 				}

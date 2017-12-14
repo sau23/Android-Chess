@@ -161,7 +161,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
             @Override
             public void onClick(View v) {
                 undoMove();
-                undo.setEnabled(false);
+                //undo.setEnabled(false);
             }
         });
 
@@ -214,8 +214,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                         if (checkMove()) {
 
                             move(srcX, srcY, destX, destY);
-                            //System.out.println(srcX + ", " + srcY);
-                            //System.out.println(destX + ", " + destY);
+
                             // check if piece moved was a promotable pawn
                             promo = -1;
                             if (!checkPawn(board.getPiece(destX, destY), false)) {

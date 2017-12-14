@@ -41,8 +41,6 @@ public class RecordedGame extends AppCompatActivity {
                 Replay selected = (Replay) adapterView.getItemAtPosition(i);
                 ReplayList.setSelected(selected);
                 showGame();
-                //Toast.makeText(RecordedGame.this, selected.toString(), Toast.LENGTH_SHORT).show();
-
             }
         });
 
@@ -73,7 +71,6 @@ public class RecordedGame extends AppCompatActivity {
                 records.setAdapter(adapter);
             }
         });
-
 
     }
 
