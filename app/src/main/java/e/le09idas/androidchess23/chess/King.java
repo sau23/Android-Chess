@@ -2,6 +2,7 @@ package e.le09idas.androidchess23.chess;
 
 import java.util.ArrayList;
 
+import e.le09idas.androidchess23.Game;
 import e.le09idas.androidchess23.NewGame;
 import e.le09idas.androidchess23.R;
 
@@ -129,7 +130,8 @@ public class King extends Piece{
 	 * @return true when successful
 	 */
 	boolean checkCastle(int x, int y, Board board){
-		NewGame.special = 1;
+		NewGame.special = -1;
+		Game.special = -1;
 		if(this.hasMoved  || this.inCheck) {//make sure the king hasn't moved
 
 			return false;
@@ -173,17 +175,21 @@ public class King extends Piece{
 				if(rook.x == 0 && rook.y == 0){
 					
 					if(board.getPiece(cPaths[0], this.y) != null || board.board[this.y][cPaths[0]].wDanger) {//checks c1
+						Game.special = -1;
 						NewGame.special = -1;
 						return false;
 					}
 					
 					if(board.getPiece(cPaths[1], this.y) != null || board.board[this.y][cPaths[1]].wDanger) {//checks d1
+						Game.special = -1;
 						NewGame.special = -1;
 						return false;
 					}
 				}
+				Game.special = 1;
 				NewGame.special = 1;
 				NewGame.move(0, 0, x + 1, y);
+				Game.move(0, 0, x + 1, y);
 
 				return true;
 
@@ -194,17 +200,21 @@ public class King extends Piece{
 				if(rook.x == 7 && rook.y == 0){
 					
 					if(board.getPiece(cPaths[2], this.y) != null || board.board[this.y][cPaths[2]].wDanger) {//checks f1
+						Game.special = -1;
 						NewGame.special = -1;
 						return false;
 					}
 					if(board.getPiece(cPaths[3], this.y) != null || board.board[this.y][cPaths[3]].wDanger) {//checks g1
+						Game.special = -1;
 						NewGame.special = -1;
 						return false;
 					}
 				}
 				System.out.println("Moving white rook");
+				Game.special = 1;
 				NewGame.special = 1;
 				NewGame.move(7, 0, x - 1, y);
+				Game.move(7, 0, x - 1, y);
 
 				return true;
 			}
@@ -216,17 +226,23 @@ public class King extends Piece{
 					if(rook.x == 0 && rook.y == 7){
 						
 						if(board.getPiece(cPaths[0], this.y) != null || board.board[this.y][cPaths[0]].bDanger) {//checks c8
+							Game.special = -1;
+							NewGame.special = -11;
 							return false;
 						}
 
 						
 						if(board.getPiece(cPaths[1], this.y) != null || board.board[this.y][cPaths[1]].bDanger) {//checks d8
+							NewGame.special = -1;
+							Game.special = -1;
 							return false;
 						}
 						
 					}
+					Game.special = 1;
 					NewGame.special = 1;
 					NewGame.move(0, 7, x + 1, y);
+					Game.move(0, 7, x + 1, y);
 
 					return true;
 				}
@@ -245,8 +261,10 @@ public class King extends Piece{
 						}
 						
 					}
+					Game.special = 1;
 					NewGame.special = 1;
 					NewGame.move(7, 7, x - 1, y);//moves rook
+					Game.move(7, 7, x - 1, y);
 
 					return true;
 				}

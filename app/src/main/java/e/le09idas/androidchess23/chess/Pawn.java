@@ -2,6 +2,7 @@ package e.le09idas.androidchess23.chess;
 
 import java.util.ArrayList;
 
+import e.le09idas.androidchess23.Game;
 import e.le09idas.androidchess23.NewGame;
 import e.le09idas.androidchess23.R;
 
@@ -58,6 +59,7 @@ public class Pawn extends Piece {
 	
 	public boolean checkMove(int xO, int yO, int xD, int yD, Board board){
 		NewGame.special = -1;
+		Game.special = -1;
 		// first, get color of the piece
 		char color = this.color;
 
@@ -84,6 +86,7 @@ public class Pawn extends Piece {
 					// set en passant
 					this.enPassant = true;
 					NewGame.special = 1;
+					Game.special = 1;
 					return true;
 				}
 
@@ -127,9 +130,12 @@ public class Pawn extends Piece {
 						
 						// move a guaranteed blank space over the pawn to be captured
 						//NewGame.move(xD, yD, xD, yD - 1);
-
-						NewGame.move(xD, yD - 1, xD, yD);
 						NewGame.special = 1;
+						Game.special = 1;
+						NewGame.move(xD, yD - 1, xD, yD);
+						Game.move(xD, yD - 1, xD, yD);
+
+
 						return true;
 					}
 				}
@@ -153,6 +159,7 @@ public class Pawn extends Piece {
 					// set en passant flag
 					this.enPassant = true;
 					NewGame.special = 1;
+					Game.special = 1;
 					return true;
 				}
 
@@ -198,6 +205,8 @@ public class Pawn extends Piece {
 						//NewGame.move(xD, yD, xD, yD + 1);
 
 						NewGame.move(xD, yD + 1, xD, yD);
+						Game.move(xD, yD + 1, xD, yD);
+
 						return true;
 					}
 				}
