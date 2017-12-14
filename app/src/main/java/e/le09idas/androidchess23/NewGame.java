@@ -54,11 +54,11 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
     private static boolean turn;
 
     //piece taken during current turn; -1 for none, 0+ for pawn, bishop, etc
-    public static int take;
+    public static int take = -1;
 
-    public static int promo;
+    public static int promo = -1;
 
-    public static int special;
+    public static int special = -1;
 
     // declare list of spaces for check
     private static ArrayList<int[]> pathToKing;
@@ -161,6 +161,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
             @Override
             public void onClick(View v) {
                 undoMove();
+                undo.setEnabled(false);
             }
         });
 
@@ -853,48 +854,4 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
         Toast.makeText(NewGame.this, input, Toast.LENGTH_SHORT).show();
     }
 
-    public boolean enPassantCheck(){
-
-        int[] lastRep = replay.getLast();
-        if(board.getTile(lastRep[0], lastRep[1]).inhabitant == null){
-            return false;
-        }
-        if(board.getTile(lastRep[0], lastRep[1]).inhabitant.type != 'p'){
-            return false;
-
-        }
-        if(Math.abs(lastRep[3] - lastRep[1]) != 1 || Math.abs(lastRep[0] - lastRep[2] ) != 1){
-            return false;
-        }
-        printDebug("enpass check true");
-        return true;
-    }
-
-    public boolean castleCheck(){
-
-        int[] lastRep = replay.getLast();
-        if(board.getTile(lastRep[2], lastRep[3]).inhabitant == null){
-            printDebug("false on castle check 1");
-            return false;
-        }
-        if(board.getTile(lastRep[2], lastRep[1]).inhabitant.type != 'K'){
-            return false;
-        }
-        switch(lastRep[2]){
-            case 2: break;
-            case 6: break;
-            default:printDebug("false on castle check 2");return false;
-        }
-        switch (lastRep[3]){
-            case 0: break;
-            case 7: break;
-            default: printDebug("false on caslte check 3");return false;
-        }
-        if((lastRep[0] !=4 || lastRep[1] != 0 ) || (lastRep[0] != 4 || lastRep[1] != 7)){
-            printDebug("false on castle check 4");
-            return false;
-        }
-        printDebug("castleCheck true");
-        return true;
-    }
 }
