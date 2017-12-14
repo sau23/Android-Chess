@@ -38,6 +38,7 @@ public class Replay implements Serializable{
         temp[3] = yD;
         temp[4] = promote;
         temp[5] = take;
+        //temp[6] = special;
         this.coordinates.add(0, temp);
     }
 
