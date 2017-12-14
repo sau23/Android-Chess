@@ -53,6 +53,7 @@ public class King extends Piece{
 		   (xD == cP[2][0] && yD == cP[2][1]) ||
 		   (xD == cP[3][0] && yD == cP[3][1]))){
 			if(checkCastle(xD, yD, board)){//if one of the castling positions are requested; this is called
+				System.out.println("This move was a castling move");
 				return true;
 			}
 		}
@@ -186,6 +187,7 @@ public class King extends Piece{
 						return false;
 					
 				}
+				System.out.println("Moving white rook");
 				NewGame.move(7, 0, x - 1, y);
 				return true;
 			}

@@ -43,7 +43,8 @@ public class Replay implements Serializable{
 
     public int[] getLast(){
         if(!this.coordinates.isEmpty()) {
-            return this.coordinates.get(this.coordinates.size() - 1);
+            //return this.coordinates.get(this.coordinates.size() - 1);
+            return this.coordinates.get(0);
         }
         return null;
 
@@ -51,7 +52,8 @@ public class Replay implements Serializable{
 
     public void removeLast(){
         if(!this.coordinates.isEmpty()) {
-            this.coordinates.remove(this.coordinates.size() - 1);
+            //this.coordinates.remove(this.coordinates.size() - 1);
+            this.coordinates.remove(0);
         }
     }
 

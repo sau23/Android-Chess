@@ -152,6 +152,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
 
         // set undo button properties
         undo = (Button) findViewById(R.id.undo);
+        undo.setEnabled(false);
         undo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -208,8 +209,8 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                         if (checkMove()) {
 
                             move(srcX, srcY, destX, destY);
-                            System.out.println(srcX + ", " + srcY);
-                            System.out.println(destX + ", " + destY);
+                            //System.out.println(srcX + ", " + srcY);
+                            //System.out.println(destX + ", " + destY);
                             // check if piece moved was a promotable pawn
                             if (!checkPawn(board.getPiece(destX, destY), false)) {
                                 replay.addCoordinates(srcX, srcY, destX, destY, -1, take);
@@ -574,6 +575,7 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
         Piece piece = board.getPiece(xO, yO);
         if(piece != null) {
             status.setText(piece.toString());
+            System.out.println(piece.toString());
         }
 
         //assume no piece will be taken at first
@@ -623,6 +625,9 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
     
     public void undoMove() {
 
+        System.out.println(srcX + ", " + srcY);
+        System.out.println(destX + ", " + destY);
+
         if (replay.getReplay().size() == 0) {
             printDebug("No previous moves");
             return;
@@ -632,6 +637,10 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
         last = replay.getLast();
         Piece piece1;
         Piece piece2 = null;
+
+        if(check){
+            check = false;
+        }
 
         if (last[4] != -1) {
             piece1 = new Pawn(last[2], last[3], board.getPiece(last[2], last[3]).color, 'p');
@@ -676,9 +685,15 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
 
         if (piece2 == null) {
             ((ImageButton) cb.getChildAt(last[2] + ((7 - last[3]) * 8))).setImageResource(android.R.drawable.list_selector_background);
-            ((ImageButton) cb.getChildAt(last[0] + ((7 - last[1]) * 8))).setImageResource(piece1.getResId());
+            //((ImageButton) cb.getChildAt(last[0] + ((7 - last[1]) * 8))).setImageResource(piece1.getResId());
         } else {
             ((ImageButton) cb.getChildAt(last[2] + ((7 - last[3]) * 8))).setImageResource(piece2.getResId());
+            //((ImageButton) cb.getChildAt(last[0] + ((7 - last[1]) * 8))).setImageResource(piece1.getResId());
+        }
+
+        if(piece1 == null){
+            ((ImageButton) cb.getChildAt(last[0] + ((7 - last[1]) * 8))).setImageResource(piece1.getResId());
+        } else {
             ((ImageButton) cb.getChildAt(last[0] + ((7 - last[1]) * 8))).setImageResource(piece1.getResId());
         }
         
@@ -749,8 +764,8 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
                     }
                 });
         alertDialog.create().show();
-    }
 
+}
     void askSave(){
         final AlertDialog.Builder askSave = new AlertDialog.Builder(NewGame.this);
         askSave.setTitle("Save Replay");
