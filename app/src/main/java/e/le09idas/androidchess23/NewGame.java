@@ -54,11 +54,11 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
     private static boolean turn;
 
     //piece taken during current turn; -1 for none, 0+ for pawn, bishop, etc
-    static int take;
+    public static int take;
 
-    static int promo;
+    public static int promo;
 
-    static int special;
+    public static int special;
 
     // declare list of spaces for check
     private static ArrayList<int[]> pathToKing;
@@ -161,7 +161,6 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
             @Override
             public void onClick(View v) {
                 undoMove();
-                undo.setEnabled(false);
             }
         });
 
@@ -725,11 +724,17 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
             piece2.updatePosition(last[2], last[3]);
         }
 
+
         printMove();
         turn = !turn;
         replay.removeLast();
         board.updateDangerZones(turn);
-
+        if(promo != -1 || special != -1){
+            turn = !turn;
+            promo = -1;
+            special = -1;
+            undoMove();
+        }
 
     }
 

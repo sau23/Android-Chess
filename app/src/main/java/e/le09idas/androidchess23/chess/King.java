@@ -129,9 +129,12 @@ public class King extends Piece{
 	 * @return true when successful
 	 */
 	boolean checkCastle(int x, int y, Board board){
-		
-		if(this.hasMoved  || this.inCheck)//make sure the king hasn't moved
+		NewGame.special = 1;
+		if(this.hasMoved  || this.inCheck) {//make sure the king hasn't moved
+
 			return false;
+		}
+
 		
 		int rX = 0;
 		int rY = 0;
@@ -144,19 +147,24 @@ public class King extends Piece{
 		}else if(x == cP[3][0] && y == cP[3][1]){//g8
 					rX = 7; rY = 7;
 		}else{
-			
+
 			return false;//can't castle
 		}
 		
 		Piece rook = board.getPiece(rX, rY);//possible rook gotten
 		
-		if(rook == null)//checks if it is a piece
-			return false;
+		if(rook == null) {//checks if it is a piece
+			;
+				return false;
+		}
 		
 		Rook cRook = (Rook)rook;//cast as a rook
 		
-		if(cRook.hasMoved || cRook.color != this.color)//check to see if the rook has moved and is the same color
+		if(cRook.hasMoved || cRook.color != this.color) {//check to see if the rook has moved and is the same color
+
 			return false;
+		}
+
 		
 		if(this.color == 'w'){//white castling
 			
@@ -164,14 +172,19 @@ public class King extends Piece{
 			
 				if(rook.x == 0 && rook.y == 0){
 					
-					if(board.getPiece(cPaths[0], this.y) != null || board.board[this.y][cPaths[0]].wDanger)//checks c1
+					if(board.getPiece(cPaths[0], this.y) != null || board.board[this.y][cPaths[0]].wDanger) {//checks c1
+						NewGame.special = -1;
 						return false;
+					}
 					
-					if(board.getPiece(cPaths[1], this.y) != null || board.board[this.y][cPaths[1]].wDanger)//checks d1
+					if(board.getPiece(cPaths[1], this.y) != null || board.board[this.y][cPaths[1]].wDanger) {//checks d1
+						NewGame.special = -1;
 						return false;
-					
+					}
 				}
+				NewGame.special = 1;
 				NewGame.move(0, 0, x + 1, y);
+
 				return true;
 
 			}
@@ -180,15 +193,19 @@ public class King extends Piece{
 			
 				if(rook.x == 7 && rook.y == 0){
 					
-					if(board.getPiece(cPaths[2], this.y) != null || board.board[this.y][cPaths[2]].wDanger)//checks f1
+					if(board.getPiece(cPaths[2], this.y) != null || board.board[this.y][cPaths[2]].wDanger) {//checks f1
+						NewGame.special = -1;
 						return false;
-					
-					if(board.getPiece(cPaths[3], this.y) != null || board.board[this.y][cPaths[3]].wDanger)//checks g1
+					}
+					if(board.getPiece(cPaths[3], this.y) != null || board.board[this.y][cPaths[3]].wDanger) {//checks g1
+						NewGame.special = -1;
 						return false;
-					
+					}
 				}
 				System.out.println("Moving white rook");
+				NewGame.special = 1;
 				NewGame.move(7, 0, x - 1, y);
+
 				return true;
 			}
 		
@@ -198,14 +215,19 @@ public class King extends Piece{
 				
 					if(rook.x == 0 && rook.y == 7){
 						
-						if(board.getPiece(cPaths[0], this.y) != null || board.board[this.y][cPaths[0]].bDanger)//checks c8
+						if(board.getPiece(cPaths[0], this.y) != null || board.board[this.y][cPaths[0]].bDanger) {//checks c8
 							return false;
+						}
+
 						
-						if(board.getPiece(cPaths[1], this.y) != null || board.board[this.y][cPaths[1]].bDanger)//checks d8
+						if(board.getPiece(cPaths[1], this.y) != null || board.board[this.y][cPaths[1]].bDanger) {//checks d8
 							return false;
+						}
 						
 					}
+					NewGame.special = 1;
 					NewGame.move(0, 7, x + 1, y);
+
 					return true;
 				}
 						
@@ -213,14 +235,19 @@ public class King extends Piece{
 				
 					if(rook.x == 7 && rook.y == 7){
 						
-						if(board.getPiece(cPaths[2], this.y) != null || board.board[this.y][cPaths[2]].bDanger)//checks f8
+						if(board.getPiece(cPaths[2], this.y) != null || board.board[this.y][cPaths[2]].bDanger) {//checks f8
 							return false;
+						}
 						
-						if(board.getPiece(cPaths[3], this.y) != null || board.board[this.y][cPaths[3]].bDanger)//checks g8
+						if(board.getPiece(cPaths[3], this.y) != null || board.board[this.y][cPaths[3]].bDanger) {//checks g8
+
 							return false;
+						}
 						
 					}
+					NewGame.special = 1;
 					NewGame.move(7, 7, x - 1, y);//moves rook
+
 					return true;
 				}
 			}
