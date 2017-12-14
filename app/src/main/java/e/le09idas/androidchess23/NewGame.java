@@ -152,11 +152,11 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
 
         // set undo button properties
         undo = (Button) findViewById(R.id.undo);
-        undo.setEnabled(false);
         undo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 undoMove();
+                undo.setEnabled(false);
             }
         });
 
@@ -707,7 +707,6 @@ public class NewGame extends AppCompatActivity implements View.OnClickListener {
 
         printMove();
         turn = !turn;
-        undo.setEnabled(false);
         replay.removeLast();
         board.updateDangerZones(turn);
         printDebug(replay.lastMoveString());
